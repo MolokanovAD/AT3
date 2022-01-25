@@ -8,5 +8,6 @@ public:
 	Variable(t typ): Node(typ) {}
 	Variable(const std::string n):name(n) {}
 	virtual Node* execute() override { return this; }
+	virtual ~Variable() {}
 };
 

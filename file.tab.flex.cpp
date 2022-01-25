@@ -535,8 +535,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "filesp.l"
-#line 2 "filesp.l"
+#line 1 "lexer.l"
+#line 2 "lexer.l"
 	#include <string>
 	#include <memory>
 	#include <iostream>
@@ -760,7 +760,7 @@ YY_DECL
 		}
 
 	{
-#line 14 "filesp.l"
+#line 14 "lexer.l"
 
 
 
@@ -833,180 +833,180 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "filesp.l"
+#line 17 "lexer.l"
 {
-				yylval.intValue = new ConstInt(std::stoi(yytext));
+				yylval.intValue = new ConstInt(new int(std::stoi(yytext)));
 				return INTEGER;
 				}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 22 "filesp.l"
+#line 22 "lexer.l"
 {
-				yylval.intValue = new ConstInt(std::stoi(yytext, nullptr, 2));
+				yylval.intValue = new ConstInt(new int(std::stoi(yytext, nullptr, 2)));
 				return INTEGER;
 			}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 27 "filesp.l"
+#line 27 "lexer.l"
 {
-				yylval.boolValue = new ConstBool(false);
+				yylval.boolValue = new ConstBool(new bool(false));
 				return BOOLEAN;
 			}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 32 "filesp.l"
+#line 32 "lexer.l"
 {
-				yylval.boolValue = new ConstBool(true);
+				yylval.boolValue = new ConstBool(new bool(true));
 				return BOOLEAN;
 			}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "filesp.l"
+#line 36 "lexer.l"
 { yylval.name = new std::string("");return BOOL;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "filesp.l"
+#line 37 "lexer.l"
 { yylval.name = new std::string("c");return BOOL;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "filesp.l"
+#line 38 "lexer.l"
 { yylval.name = new std::string("v");return BOOL;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "filesp.l"
+#line 39 "lexer.l"
 { yylval.name = new std::string("cv");return BOOL;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "filesp.l"
+#line 40 "lexer.l"
 { yylval.name = new std::string("m");return BOOL;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "filesp.l"
+#line 41 "lexer.l"
 { yylval.name = new std::string("cm");return BOOL;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "filesp.l"
+#line 42 "lexer.l"
 { yylval.name = new std::string("");return INT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "filesp.l"
+#line 43 "lexer.l"
 { yylval.name = new std::string("c");return INT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 44 "filesp.l"
+#line 44 "lexer.l"
 { yylval.name = new std::string("v");return INT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 45 "filesp.l"
+#line 45 "lexer.l"
 { yylval.name = new std::string("cv");return INT;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 46 "filesp.l"
+#line 46 "lexer.l"
 { yylval.name = new std::string("m");return INT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 47 "filesp.l"
+#line 47 "lexer.l"
 { yylval.name = new std::string("cm");return INT;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 48 "filesp.l"
+#line 48 "lexer.l"
 {return FOR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 49 "filesp.l"
+#line 49 "lexer.l"
 {yylval.name = new std::string("for");return BEG;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 50 "filesp.l"
+#line 50 "lexer.l"
 {yylval.name = new std::string("if");return BEG;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 51 "filesp.l"
+#line 51 "lexer.l"
 {yylval.name = new std::string("");return BEG;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 52 "filesp.l"
+#line 52 "lexer.l"
 {yylval.name = new std::string("for");return END;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 53 "filesp.l"
+#line 53 "lexer.l"
 {yylval.name = new std::string("if");return END;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 54 "filesp.l"
+#line 54 "lexer.l"
 {yylval.name = new std::string("");return END;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 55 "filesp.l"
+#line 55 "lexer.l"
 {return IF;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 56 "filesp.l"
+#line 56 "lexer.l"
 {return FUN;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 57 "filesp.l"
+#line 57 "lexer.l"
 return ASSIGN;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 58 "filesp.l"
+#line 58 "lexer.l"
 return LSHIFT;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 59 "filesp.l"
+#line 59 "lexer.l"
 return RSHIFT;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 60 "filesp.l"
+#line 60 "lexer.l"
 return AND;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 61 "filesp.l"
+#line 61 "lexer.l"
 return ELEMMUL;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 62 "filesp.l"
+#line 62 "lexer.l"
 return SUM;
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 63 "filesp.l"
+#line 63 "lexer.l"
 ;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 65 "filesp.l"
+#line 65 "lexer.l"
 {
 							yylval.name = new std::string(yytext);
 							return VAR;
@@ -1015,22 +1015,22 @@ YY_RULE_SETUP
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 70 "filesp.l"
+#line 70 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 72 "filesp.l"
+#line 72 "lexer.l"
 ;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 74 "filesp.l"
+#line 74 "lexer.l"
 yyerror("Unknown character");
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 76 "filesp.l"
+#line 76 "lexer.l"
 ECHO;
 	YY_BREAK
 #line 1036 "file.tab.flex.cpp"
@@ -2050,7 +2050,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 76 "filesp.l"
+#line 76 "lexer.l"
 
 
 int yywrap(void) {

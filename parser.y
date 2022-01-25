@@ -37,7 +37,7 @@
 %left '+' '-'
 %left '*' '/'
 %right UMINUS
-%type <node> program sentence_sequence sentence expr declaration expr_sequence //args exprs
+%type <node> expr appeal expr_sequence//args exprs
 
 %destructor { delete $$; } <node>
 %destructor { delete $$; } <intValue>
@@ -48,7 +48,7 @@
 
 program:
 		program sentence_sequence	
-		| sentence		
+		| sentence	
 		;
 sentence_sequence:
 		sentence_sequence sentence
@@ -64,91 +64,43 @@ declaration:
 
 		INT VAR '=' expr			{ 
 											if(*$1 == "") {
-															try{
-																insertVar(t::VARINT, $2, $4->execute(), varTable);
-																}
-															catch(...){}
-															break;
+															$$ = new Declare(t::VARINT,$2,$4,varTable);
 														}
 											else if(*$1 == "c") {
-															try{
-																insertVar(t::CONSTINT, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTINT,$2,$4,varTable);	
 														}
 											else if(*$1 == "v") {
-															try{
-																insertVar(t::INTARR, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::INTARR,$2,$4,varTable);
 														}
 											else if(*$1 == "cv") {
-															try{
-																insertVar(t::CONSTINTARR, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTINTARR,$2,$4,varTable);
 														}
 											else if(*$1 == "m") {
-															try{
-																insertVar(t::INTMATRIX, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::INTMATRIX,$2,$4,varTable);
 														}
 											else if(*$1 == "cm") {
-															try{
-																insertVar(t::CONSTINTMATRIX, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTINTMATRIX,$2,$4,varTable);
 														}
 									}
 
 		| BOOL VAR '=' expr			{ 
 											if(*$1 == "") {
-															try{
-																insertVar(t::VARBOOL, $2, $4->execute(), varTable);
-																}
-															catch(...){}
-															break;
+															$$ = new Declare(t::VARBOOL,$2,$4,varTable);
 														}
 											else if(*$1 == "c") {
-															try{
-																insertVar(t::CONSTBOOL, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTBOOL,$2,$4,varTable);	
 														}
 											else if(*$1 == "v") {
-															try{
-																insertVar(t::BOOLARR, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::BOOLARR,$2,$4,varTable);
 														}
 											else if(*$1 == "cv") {
-															try{
-																insertVar(t::CONSTBOOLARR, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTBOOLARR,$2,$4,varTable);
 														}
 											else if(*$1 == "m") {
-															try{
-																insertVar(t::BOOLMATRIX, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::BOOLMATRIX,$2,$4,varTable);
 														}
 											else if(*$1 == "cm") {
-															try{
-																insertVar(t::CONSTBOOLMATRIX, $2, $4->execute(), varTable);
-																}
-															catch(...){} 
-															break;
+															$$ = new Declare(t::CONSTBOOLMATRIX,$2,$4,varTable);
 														}
 								}
 
@@ -156,18 +108,10 @@ declaration:
 
 
 assignment:
-		VAR ASSIGN expr {
-							Node* n3 = $3->execute();
-							try {
-								Node* var = varTable.at(*$1);
-								Node* newVal = assignVar(var->type(), n3);
-								delete var;
-								varTable[*$1] = newVal;
-							}
-							catch(...){
-								//...
-							}
-						}
+		VAR ASSIGN expr		{ $$ = new Assign($1, $3, varTable); }
+
+		| appeal ASSIGN expr	{ $$ = new Assign($1, $3, varTable);  }
+
 		;
 
 expr:
@@ -176,223 +120,76 @@ expr:
 
 		| BOOLEAN						{ $$ = $1; }
 
+		| VAR							{
+											try{
+												$$ = varTable.at(*$1)->clone();
+											}
+											catch(std::exception& ex){
+												//...
+											}
+										}
+
+		| appeal						{ $$ = $1->clone(); $1->dump(); delete $1;}
+		
 		| '-' expr %prec UMINUS			{ 
 											try{
 												$$ = minus($2);
+												delete $2;
 											}
 											catch(std::exception& ex){
 												//...
 											}
 										}
 
-		| VAR							{
-											try{
-												$$ = varTable.at(*$1);
-											}
-											catch(std::exception& ex){
-												//...
-											}
-										}
-
-		| '{' expr_sequence '}'			{ $$ = $2->execute(); }
-
-		| VAR '(' expr ',' expr ')'	{ 
-										auto it = varTable.find(*$1);
-										if(it != varTable.end()){
-											if(dynamic_cast<ConstIntMatrix*>(it->second)){
-												try {
-													$$ = getIntValue(it->second, $3->execute(), $5->execute());		
-												}
-												catch(std::exception& ex){
-													//...
-												}
-											}
-											else if (dynamic_cast<ConstBoolMatrix*>(it->second)){
-												try {
-													$$ = getBoolValue(it->second, $3->execute(), $5->execute());		
-												}
-												catch(std::exception& ex){
-													//...
-												}
-											}
-										}
-									}
-		| VAR '(' expr ',' colon ')'	{
-											auto it = varTable.find(*$1);
-											if(it != varTable.end()){
-												if(compatible(t::CONSTINTMATRIX, it->second) || compatible(t::CONSTBOOLMATRIX, it->second)) {
-													Node* p = $3->execute();
-													if (castToInt(p)) {
-														try {
-															$$ = getVec(it->second,p,0);
-														}
-														catch(std::exception& ex) {
-															//...
-														}
-													}
-													else{
-														if(dynamic_cast<ConstIntArray*>(p)){
-															try {
-																$$ = getMatrix(it->second,p,0);
-															}
-															catch(...){
-																//... error!
-															}
-														}
-													}
-												}
-											}
-										}
-
-		| VAR '(' colon ',' expr ')'	{
-											auto it = varTable.find(*$1);
-											if(it != varTable.end()){
-												if(compatible(t::CONSTINTMATRIX, it->second) || compatible(t::CONSTBOOLMATRIX, it->second)) {
-													Node* p = $5->execute();
-													auto i = castToInt(p);
-													if (i) {
-														try {
-															$$ = getVec(it->second,p,1);
-														}
-														catch(std::exception& ex) {
-															//...
-														}
-													}
-													else{
-														if(dynamic_cast<ConstIntArray*>(p)){
-															try {
-																$$ = getMatrix(it->second,p,1);
-															}
-															catch(...){
-																//... error!
-															}
-														}
-													}
-												}
-											}
-										}
-
-		| VAR '(' expr ')'				{
-											auto it = varTable.find(*$1);
-											if(it != varTable.end()){
-												try {
-													$$ = matrixFromLogical(it->second,$3->execute());
-												}
-												catch(...){
-													//...
-												}
-											}
-										}
+		| '{' expr_sequence '}'			{ $$ = $2; }
 		
-		| expr '+' expr					{
-											Node* n1 = $1->execute();
-											Node* n3 = $3->execute();
-											if(addable(n1, n3)) {
-												$$ = new Add(n1,n3);
-											}
-											else{
-												//...
-											}
-										}
+		| expr '+' expr					{  $$ = new Add($1,$3); }
 
-		| expr '-' expr					{
-											Node* n1 = $1->execute();
-											Node* n3 = $3->execute();
-											if(addable(n1, n3)) {
-												$$ = new Subtract(n1,n3);
-											}
-											else{
-												//...
-											}
-										}
+		| expr '-' expr					{ $$ = new Subtract($1,$3); }
 
-		| '!' expr						{
-											Node* n2 = $2->execute();
-											if(compatible(t::CONSTBOOL, n2)) {
-												$$ = new Not(n2);
-											}
-											else{
-												//...
-											}
-										}
+		| '!' expr						{ $$ = new Not($2); }
 
-		| expr '*' expr					{
-											Node* n1 = $1->execute();
-											Node* n3 = $3->execute();
-											if(compatible(t::CONSTINTMATRIX, n1, n3)) {
-												$$ = new MatrixMult(n1,n3);
-											}
-										}
+		| expr '*' expr					{ $$ = new MatrixMult($1,$3); }
 
-		| expr ELEMMUL expr				{
-											Node* n1 = $1->execute();
-											Node* n3 = $3->execute();
-											if(compatible(t::CONSTINTMATRIX, n1, n3) || compatible(t::CONSTINTARR, n1, n3)) {
-												$$ = new ElemMult(n1,n3);
-											}
-										}
+		| expr ELEMMUL expr				{ $$ = new ElemMult($1,$3); }
 
-		| SUM '(' expr ')'				{
-											Node* n3 = $3->execute();
-											if(compatible(t::CONSTINTMATRIX, n3) || compatible(t::CONSTINTARR, n3)) {
-												$$ = new Sum(n3);
-											}
-										}
+		| SUM '(' expr ')'				{ $$ = new Sum($3); }
 
-		| expr '\''				{
-											Node* n1 = $1->execute();
-											if(compatible(t::CONSTINTMATRIX, n1) || compatible(t::CONSTBOOLMATRIX, n1)) {
-												$$ = new Transposition(n1);
-											}
-										}
+		| expr '\''						{ $$ = new Transposition($1); }
 
-		| expr LSHIFT			{
-									Node* n1 = $1->execute();
-									if(compatible(t::CONSTINTARR, n1) || compatible(t::CONSTBOOLARR, n1)) {
-												$$ = new Shift(n1,true);
-									}
-								}
+		| expr LSHIFT					{ $$ = new Shift($1,true); }
 
-		| expr RSHIFT			{
-									Node* n1 = $1->execute();
-									if(compatible(t::CONSTINTARR, n1) || compatible(t::CONSTBOOLARR, n1)) {
-												$$ = new Shift(n1,false);
-									}
-								}
+		| expr RSHIFT					{ $$ = new Shift($1,false); }
 
-		| expr AND expr			{
-									Node* n1 = $1->execute();
-									Node* n3 = $3->execute();
-									if (compatible(t::CONSTBOOL, n1, n3)) {
-										$$ = new And(n1,n3);
-									}
-								}
+		| expr AND expr					{ $$ = new And($1,$3); }
 
-		| expr '>' expr			{
-									Node* n1 = $1->execute();
-									Node* n3 = $3->execute();
-									if(compatible(t::CONSTINT, n1, n3)) {
-										$$ = new Compare(n1,n3,true);
-									}
-								}
+		| expr '>' expr					{ $$ = new Compare($1,$3,true); }
 
-		| expr '<' expr			{
-									Node* n1 = $1->execute();
-									Node* n3 = $3->execute();
-									if(compatible(t::CONSTINT, n1, n3)) {
-										$$ = new Compare(n1,n3,false);
-									}
-								}
+		| expr '<' expr					{ $$ = new Compare($1,$3,false); }
+
+appeal:
+
+		VAR '(' expr ',' expr ')'		{ $$ = new Appeal($1, $3, $5, varTable, APPEAL::COORDINATES); }
+
+		| VAR '(' expr ',' colon ')'	{ $$ = new Appeal($1, $3, nullptr, varTable, APPEAL::COLUMNS); }
+
+		| VAR '(' colon ',' expr ')'	{ $$ = new Appeal($1, $5, nullptr, varTable, APPEAL::ROWS); }
+
+		| VAR '(' expr ')'				{ $$ = new Appeal($1, $3, nullptr, varTable, APPEAL::LOGICAL); }
+
+		;
 
 colon:
 		':'
+
 		|
+
 		;
 expr_sequence:
 
 		expr_sequence ',' expr		{ 
 										try {
-												addElementToContainer($1, $3->execute());
+												addElementToContainer($1, $3);
 												$$ = $1;
 										}
 										catch(std::exception& ex){
@@ -400,7 +197,7 @@ expr_sequence:
 										}			
 									}
 
-		| expr						{ $$ = createContainer($1->execute()); }
+		| expr						{ $$ = createContainer($1); }
 
 		;
 %%
@@ -410,7 +207,7 @@ void yyerror(const char* s) {
 }
 
 int main(int argc, const char* argv) {
-	fopen_s (&yyin, "operations.txt", "r");
+	fopen_s (&yyin, "appeal.txt", "r");
 	if (!yyin)        
 		yyin = stdin;
 	yyparse();

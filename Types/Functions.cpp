@@ -52,45 +52,35 @@ int toInt(Node* n) {
 	throw std::exception("Not compatible");
 }
 
-Int* castToInt(Node* node) {
-	auto i = dynamic_cast<ConstInt*>(node);
-	if (i)
-		return new Int(i->getValue());
-	auto b = dynamic_cast<ConstBool*>(node);
-	if (b)
-		return new Int(b->getValue());
-	return nullptr;
-}
-
 
 bool insertVar(t type, std::string* id, Node* expr, std::map<std::string, Node*>& varTable) {
 	if (compatible(type, expr)) {
 		if (varTable.find(*id) == varTable.end()) {
 			switch (type) {
 				case VARBOOL:
-					return varTable.insert({ *id, new Bool(toInt(expr)) }).second;
+					return varTable.insert({ *id, new Bool(new bool(toInt(expr))) }).second;
 				case CONSTBOOL:
-					return varTable.insert({ *id, new ConstBool(toInt(expr)) }).second;
+					return varTable.insert({ *id, new ConstBool(new bool(toInt(expr))) }).second;
 				case VARINT:
-					return varTable.insert({ *id, new Int(toInt(expr)) }).second;
+					return varTable.insert({ *id, new Int(new int(toInt(expr))) }).second;
 				case CONSTINT:
-					return varTable.insert({ *id, new ConstInt(toInt(expr)) }).second;
+					return varTable.insert({ *id, new ConstInt(new int(toInt(expr))) }).second;
 				case INTARR:
-					return varTable.insert({ *id, new IntArray(dynamic_cast<ConstIntArray*>(expr)->getValue()) }).second;
+					return varTable.insert({ *id, new IntArray(dynamic_cast<ConstIntArray*>(expr)->pop()) }).second;
 				case CONSTINTARR:
-					return varTable.insert({ *id, new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->getValue()) }).second;
+					return varTable.insert({ *id, new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->pop()) }).second;
 				case BOOLARR:
-					return varTable.insert({ *id, new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->getValue()) }).second;
+					return varTable.insert({ *id, new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop()) }).second;
 				case CONSTBOOLARR:
-					return varTable.insert({ *id, new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->getValue()) }).second;
+					return varTable.insert({ *id, new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop()) }).second;
 				case INTMATRIX:
-					return varTable.insert({ *id, new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->getMatrix()) }).second;
+					return varTable.insert({ *id, new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop()) }).second;
 				case CONSTINTMATRIX:
-					return varTable.insert({ *id, new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->getMatrix()) }).second;
+					return varTable.insert({ *id, new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop()) }).second;
 				case BOOLMATRIX:
-					return varTable.insert({ *id, new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->getMatrix()) }).second;
+					return varTable.insert({ *id, new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop()) }).second;
 				case CONSTBOOLMATRIX:
-					return varTable.insert({ *id, new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->getMatrix()) }).second;
+					return varTable.insert({ *id, new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop()) }).second;
 				default:
 					throw std::exception("Unknown type");
 			}
@@ -104,31 +94,31 @@ Node* assignVar(t type, Node* expr) {
 	if (compatible(type, expr)) {
 		switch (type) {
 			case VARBOOL:
-				return new Bool(toInt(expr));
-			case CONSTBOOL:
-				return new ConstBool(toInt(expr));
+				return new Bool(new bool(toInt(expr)));
+			/*case CONSTBOOL:
+				return  new ConstBool(new bool(toInt(expr)));*/
 			case VARINT:
-				return new Int(toInt(expr));
-			case CONSTINT:
-				return new ConstInt(toInt(expr));
+				return new Int(new int(toInt(expr)));
+			/*case CONSTINT:
+				return new ConstInt(new int(toInt(expr)));*/
 			case INTARR:
-				return new IntArray(dynamic_cast<ConstIntArray*>(expr)->getValue());
-			case CONSTINTARR:
-				return new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->getValue());
+				return new IntArray(dynamic_cast<ConstIntArray*>(expr)->pop());
+			/*case CONSTINTARR:
+				return new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->pop());*/
 			case BOOLARR:
-				return new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->getValue());
-			case CONSTBOOLARR:
-				return new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->getValue());
+				return new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop());
+			/*case CONSTBOOLARR:
+				return new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop());*/
 			case INTMATRIX:
-				return new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->getMatrix());
-			case CONSTINTMATRIX:
-				return new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->getMatrix());
+				return new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop());
+			/*case CONSTINTMATRIX:
+				return new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop());*/
 			case BOOLMATRIX:
-				return new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->getMatrix());
-			case CONSTBOOLMATRIX:
-				return new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->getMatrix());
+				return new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop());
+			/*case CONSTBOOLMATRIX:
+				return new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop());*/
 			default:
-				throw std::exception("Unknown type");
+				throw std::exception("Cannot change value of constant");
 		}
 	}
 	else
@@ -138,25 +128,24 @@ Node* assignVar(t type, Node* expr) {
 Node* createContainer(Node* child) {
 	switch (child->type()) 	{
 		case VARBOOL:
-			return new BoolArray({ dynamic_cast<ConstBool*>(child)->getValue() });
+			return new BoolArray({ dynamic_cast<ConstBool*>(child)->pop() });
 		case CONSTBOOL:
-			return new BoolArray({ dynamic_cast<ConstBool*>(child)->getValue() });
+			return new BoolArray({ dynamic_cast<ConstBool*>(child)->pop() });
 		case VARINT:
-			return new IntArray({ dynamic_cast<ConstInt*>(child)->getValue() });
+			return new IntArray({ dynamic_cast<ConstInt*>(child)->pop() });
 		case CONSTINT:
-			return new IntArray({ dynamic_cast<ConstInt*>(child)->getValue() });
+			return new IntArray({ dynamic_cast<ConstInt*>(child)->pop() });
 		case INTARR:
-			return new IntMatrix({ dynamic_cast<ConstIntArray*>(child)->getValue() });
+			return new IntMatrix({ dynamic_cast<ConstIntArray*>(child)->pop() });
 		case CONSTINTARR:
-			return new IntMatrix({ dynamic_cast<ConstIntArray*>(child)->getValue() });
+			return new IntMatrix({ dynamic_cast<ConstIntArray*>(child)->pop() });
 		case BOOLARR:
-			return new BoolMatrix({ dynamic_cast<ConstBoolArray*>(child)->getValue() });
+			return new BoolMatrix({ dynamic_cast<ConstBoolArray*>(child)->pop() });
 		case CONSTBOOLARR:
-			return new BoolMatrix({ dynamic_cast<ConstBoolArray*>(child)->getValue() });
+			return new BoolMatrix({ dynamic_cast<ConstBoolArray*>(child)->pop() });
 		default:
 			throw std::exception("Wrong type");
 	}
-	std::map<std::string, Node*> varTable;
 }
 
 void addElementToContainer(Node* cnt, Node* e) {
@@ -183,7 +172,7 @@ void addElementToContainer(Node* cnt, Node* e) {
 	}
 }
 
-Int* getIntValue(Node* m, Node* f, Node* s) {
+ConstInt* getIntValue(Node* m, Node* f, Node* s) {
 	auto matrix = dynamic_cast<ConstIntMatrix*>(m);
 	if (matrix) {
 		auto i = dynamic_cast<ConstInt*>(f);
@@ -201,7 +190,7 @@ Int* getIntValue(Node* m, Node* f, Node* s) {
 	}
 	throw std::exception("Wrong parameters");
 }
-Bool* getBoolValue(Node* m, Node* f, Node* s) {
+ConstBool* getBoolValue(Node* m, Node* f, Node* s) {
 	auto matrix = dynamic_cast<ConstBoolMatrix*>(m);
 	if (matrix) {
 		auto i = dynamic_cast<ConstInt*>(f);
@@ -220,10 +209,10 @@ Bool* getBoolValue(Node* m, Node* f, Node* s) {
 	throw std::exception("Wrong parameters");
 }
 
-IntArray* getIntVec(Node* m, Node* r, bool mode) {
+ConstIntArray* getIntVec(Node* m, Node* r, bool mode) {
 	auto matrix = dynamic_cast<ConstIntMatrix*>(m);
+	auto row = dynamic_cast<ConstInt*>(r);
 	if (matrix) {
-		auto row = dynamic_cast<ConstInt*>(r);
 		if (row) {
 			try {
 				return mode ? matrix->getRow(row->getValue()) : matrix->getColumn(row->getValue());
@@ -236,16 +225,19 @@ IntArray* getIntVec(Node* m, Node* r, bool mode) {
 	}
 	throw std::exception("Wrong parameters");
 }
-BoolArray* getBoolVec(Node* m, Node* r, bool mode) {
+ConstBoolArray* getBoolVec(Node* m, Node* r, bool mode) {
 	auto matrix = dynamic_cast<ConstBoolMatrix*>(m);
-	if (matrix) {
-		auto row = dynamic_cast<ConstInt*>(r);
-		try {
-			return mode ? matrix->getRow(row->getValue()) : matrix->getColumn(row->getValue());
+	auto row = dynamic_cast<ConstInt*>(r);
+	if (matrix && row) {
+		if (row) {
+			try {
+				return mode ? matrix->getRow(row->getValue()) : matrix->getColumn(row->getValue());
+			}
+			catch (std::exception& ex) {
+				throw ex;
+			}
 		}
-		catch (std::exception& ex) {
-			throw ex;
-		}
+		else throw std::exception("Not an index");
 	}
 	throw std::exception("Wrong parameters");
 }
@@ -264,19 +256,18 @@ Node* getVec(Node* m, Node* r, bool mode) {
 	}
 }
 
-IntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
+ConstIntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
 	auto vec = dynamic_cast<ConstIntArray*>(r);
 	auto mx = dynamic_cast<ConstIntMatrix*>(m);
-	std::vector<std::vector<int>> matrix;
+	std::vector<std::vector<int*>> matrix;
 	if (vec && mx) {
 		auto val = vec->getValue();
 		for (int i = 0; i < val.size(); i++) {
-			Int* index = new Int(val[i]);
+			Int* index = new Int(new int(*val[i]));
 			try {
 				auto ptr = getIntVec(m, index, mode);
-				auto v = ptr->getValue();
+				matrix.push_back(ptr->pop());
 				delete ptr;
-				matrix.push_back(v);
 			}
 			catch (std::exception& ex) {
 				delete index;
@@ -287,22 +278,21 @@ IntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
 	}
 	else
 		throw std::exception("Wrong parameters");
-	return new IntMatrix(matrix);
+	return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(matrix) : new ConstIntMatrix(matrix);
 }
 
-BoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
-	auto vec = dynamic_cast<ConstIntArray*>(r);
+ConstBoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
 	auto mx = dynamic_cast<ConstBoolMatrix*>(m);
-	std::vector<std::vector<bool>> matrix;
+	auto vec = dynamic_cast<ConstIntArray*>(r);
+	std::vector<std::vector<bool*>> matrix;
 	if (vec && mx) {
 		auto val = vec->getValue();
 		for (int i = 0; i < val.size(); i++) {
-			Int* index = new Int(val[i]);
+			Int* index = new Int(new int(*val[i]));
 			try {
 				auto ptr = getBoolVec(m, index, mode);
-				auto v = ptr->getValue();
+				matrix.push_back(ptr->pop());
 				delete ptr;
-				matrix.push_back(v);
 			}
 			catch (std::exception& ex) {
 				delete index;
@@ -313,7 +303,7 @@ BoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
 	}
 	else
 		throw std::exception("Wrong parameters");
-	return new BoolMatrix(matrix);
+	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(matrix) : new ConstBoolMatrix(matrix);
 }
 
 Node* getMatrix(Node* m, Node* r, bool mode) {
@@ -339,19 +329,19 @@ Node* getMatrix(Node* m, Node* r, bool mode) {
 //	}
 //}
 
-IntMatrix* intMatrixFromLogical(Node* m, Node* r) {
+ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r) {
 	auto i = dynamic_cast<ConstIntMatrix*>(m);
 	auto l = dynamic_cast<ConstBoolMatrix*>(r);
-	std::vector<std::vector<int>> res;
+	std::vector<std::vector<int*>> res;
 	if (i && l) {
 		auto iMatrix = i->getMatrix();
 		auto lMatrix = l->getMatrix();
 		if (iMatrix.size() != lMatrix.size() || iMatrix.front().size() != lMatrix.front().size())
 			throw std::exception("Different sizes");
 		for (int k = 0; k < lMatrix.size(); k++) {
-			std::vector<int> line;
+			std::vector<int*> line;
 			for (int j = 0; j < lMatrix.front().size(); j++) {
-				if (lMatrix[k][j])
+				if (*lMatrix[k][j])
 					line.push_back(iMatrix[k][j]);
 			}
 			if (!res.empty() && line.size() != res.front().size() && line.size() != 0)
@@ -362,22 +352,22 @@ IntMatrix* intMatrixFromLogical(Node* m, Node* r) {
 	}
 	else
 		throw std::exception("Wrong operands");
-	return new IntMatrix(res);
+	return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(res) : new ConstIntMatrix(res);
 }
 
-BoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
+ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
 	auto i = dynamic_cast<ConstBoolMatrix*>(m);
 	auto l = dynamic_cast<ConstBoolMatrix*>(r);
-	std::vector<std::vector<bool>> res;
+	std::vector<std::vector<bool*>> res;
 	if (i && l) {
 		auto iMatrix = i->getMatrix();
 		auto lMatrix = l->getMatrix();
 		if (iMatrix.size() != lMatrix.size() || iMatrix.front().size() != lMatrix.front().size())
 			throw std::exception("Different sizes");
-		std::vector<bool> line;
+		std::vector<bool*> line;
 		for (int k = 0; k < lMatrix.size(); k++) {
 			for (int j = 0; j < lMatrix.front().size(); j++) {
-				if (lMatrix[k][j])
+				if (*lMatrix[k][j])
 					line.push_back(iMatrix[k][j]);
 			}
 			if (!res.empty() && line.size() != res.front().size() && line.size() != 0)
@@ -387,7 +377,7 @@ BoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
 	}
 	else
 		throw std::exception("Wrong operands");
-	return new BoolMatrix(res);
+	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(res) : new ConstBoolMatrix(res);
 }
 
 Node* matrixFromLogical(Node* m, Node* r) {
@@ -408,6 +398,12 @@ bool isMatrix(Node* n) {
 	return n->type() == CONSTBOOLMATRIX || n->type() == CONSTINTMATRIX || n->type() == INTMATRIX || n->type() == BOOLMATRIX;
 }
 
+bool isConst(Node* n) {
+	if (n->type() == CONSTBOOLMATRIX || n->type() == CONSTINTMATRIX || n->type() == CONSTBOOLARR || n->type() == CONSTINTARR || n->type() == CONSTBOOL || n->type() == CONSTINT)
+		return true;
+	return false;
+}
+
 bool multiplicable(Node* f, Node* s) {
 	return compatible(t::CONSTINTMATRIX, f, s);
 }
@@ -415,10 +411,10 @@ bool multiplicable(Node* f, Node* s) {
 Int* minus(Node* node) {
 	auto i = dynamic_cast<ConstInt*>(node);
 	if (i)
-		return new Int(-i->getValue());
+		return new Int(new int(-i->getValue()));
 	auto b = dynamic_cast<ConstBool*>(node);
 	if (b)
-		return new Int(-b->getValue());
+		return new Int(new int(-b->getValue()));
 	throw std::exception("Wrong operand");
 }
 

@@ -12,13 +12,13 @@ int Operation::getInt(Node* p) {
     }
 }
 
-Operation::Operation(Node* f, Node* s) {
-    if (dynamic_cast<Operation*>(f))
-        first = f;
-    else if (dynamic_cast<Variable*>(f))
-        first = f->clone();
-    if (dynamic_cast<Operation*>(s))
-        second = s;
-    else if (dynamic_cast<Variable*>(s))
-        second = s->clone();
-}
+//Operation::Operation(Node* f, Node* s) {
+//    if (dynamic_cast<Operation*>(f))
+//        first = f;
+//    else if (dynamic_cast<Variable*>(f))
+//        first = f->clone();
+//    if (dynamic_cast<Operation*>(s))
+//        second = s;
+//    else if (dynamic_cast<Variable*>(s))
+//        second = s->clone();
+//}
