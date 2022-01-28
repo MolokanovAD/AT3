@@ -6,6 +6,9 @@ vint result = function addIf(int i, int j = 10) begin
 end
 addIf 10
 int res, bool someVal = function recursive(int i) begin
+	function foo() begin
+		int var = 123
+	end
 	int res = i
 	bool someVal = false
 	if i < 5 beginif

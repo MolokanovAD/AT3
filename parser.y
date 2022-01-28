@@ -69,7 +69,7 @@
 %destructor { delete $$; } <node>
 %destructor { delete $$; } <intValue>
 %destructor { delete $$; } <boolValue>
-%destructor { delete $$;} <name>
+%destructor { delete $$; } <name>
 
 %%
 
@@ -81,7 +81,7 @@ program:
 									try {
 										$1->execute();
 									} catch(std::exception& ex) {
-										std::cout << ex.what() << std::endl;
+										std::cerr << ex.what() << std::endl;
 									}
 									printVarTable(callStack.top());
 									freeStacks(&callStack,&funStack);
@@ -115,7 +115,7 @@ sentence:
 
 		| for '\n'					{ $$ = $1; }
 
-		| function '\n'				{ $$ = new Declare(dynamic_cast<Function*>($1)->getName(), &funStack, $1, $1->getLine()); }		/*functionTable.insert({dynamic_cast<Function*>($1)->getName(), dynamic_cast<Function*>($1)});*/
+		| function '\n'				{ $$ = new Declare(dynamic_cast<Function*>($1)->getName(), &funStack, $1, $1->getLine()); }
 
 		| funcall '\n'				{ $$ = $1; }
 
@@ -271,7 +271,7 @@ colon:
 if: 
 		IF expr BEG '\n' sentence_sequence END  {
 															if (*$3 == "for" || *$6 == "for") {
-																//..
+																std::cerr << "Warning: beginfor and endfor shouldn't be used with if, line " << @1.first_line << std::endl;
 															}
 															else
 																$$ = new If($2, $5, @1.first_line);
@@ -284,7 +284,7 @@ if:
 for: 
 		FOR VAR '=' expr ':' expr BEG '\n' sentence_sequence END	{
 																				if (*$7 == "if" || *$10 == "if") {
-																					//...
+																					std::cerr << "Warning: beginif and endif shouldn't be used with for, line " << @1.first_line << std::endl;
 																				}
 																				else
 																					$$ = new For(*$2, $4, $6, $9, &callStack, @1.first_line);
@@ -312,7 +312,7 @@ int main(int argc, const char* argv) {
 	catch(std::exception& ex){
 		std::cout << ex.what();
 	}
-	fopen_s (&yyin, "Programs/algorithm.txt", "r");
+	fopen_s (&yyin, "Programs/appeal.txt", "r");
 	if (yyin)   
 		yyparse();
 	return 0;

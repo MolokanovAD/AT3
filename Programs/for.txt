@@ -1,0 +1,13 @@
+int k = 100
+for k = 0:10 begin
+	if k > 4 beginif
+		k <- 10
+	endif
+endfor
+int j = 0
+int val = 0
+for k = 0:10 begin
+	for j = 0:10 beginfor
+		val <- val + 1
+	endfor
+endfor
