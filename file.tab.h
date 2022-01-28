@@ -47,22 +47,26 @@ extern int yydebug;
       know about them.  */
    enum yytokentype {
      INTEGER = 258,
-     BOOLEAN = 259,
-     VAR = 260,
-     BOOL = 261,
-     INT = 262,
-     BEG = 263,
-     END = 264,
-     ASSIGN = 265,
-     LSHIFT = 266,
-     RSHIFT = 267,
-     AND = 268,
-     ELEMMUL = 269,
-     SUM = 270,
-     IF = 271,
-     FOR = 272,
-     FUN = 273,
-     UMINUS = 274
+     BOOL = 259,
+     INT = 260,
+     TURN = 261,
+     BOOLEAN = 262,
+     VAR = 263,
+     BEG = 264,
+     END = 265,
+     ASSIGN = 266,
+     LSHIFT = 267,
+     RSHIFT = 268,
+     AND = 269,
+     ELEMMUL = 270,
+     SUM = 271,
+     IF = 272,
+     FOR = 273,
+     FUN = 274,
+     MOVE = 275,
+     WALL = 276,
+     EXIT = 277,
+     UMINUS = 278
    };
 #endif
 
@@ -71,24 +75,38 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 26 "parser.y"
+#line 50 "parser.y"
 
 	Node* node; 
 	ConstInt* intValue;
 	ConstBool* boolValue;
 	std::string* name;
+	int type;
 
 
 /* Line 2058 of yacc.c  */
-#line 84 "file.tab.h"
+#line 89 "file.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-extern YYSTYPE yylval;
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
 
+extern YYSTYPE yylval;
+extern YYLTYPE yylloc;
 #ifdef YYPARSE_PARAM
 #if defined __STDC__ || defined __cplusplus
 int yyparse (void *YYPARSE_PARAM);

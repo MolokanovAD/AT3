@@ -4,7 +4,8 @@
 #include "../Ints/Int.h"
 class Not : public Operation {
 public:
-	Not(Node* child) : Operation(child, nullptr) {}
+	Not(Node* child, int l = 0) : Operation(child,l) {}
 	Node* execute();
+	virtual Not* clone() const override { return new Not(*this); }
 };
 

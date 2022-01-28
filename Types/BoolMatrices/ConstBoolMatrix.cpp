@@ -1,6 +1,6 @@
 #include "ConstBoolMatrix.h"
 
-ConstBoolMatrix::ConstBoolMatrix(const ConstBoolMatrix& cbm, t typ):Variable(typ) {
+ConstBoolMatrix::ConstBoolMatrix(const ConstBoolMatrix& cbm, t typ,int l):Variable(typ,l) {
 	for (auto& i : cbm.matrix) {
 		std::vector<bool*> line;
 		for (auto j : i) {

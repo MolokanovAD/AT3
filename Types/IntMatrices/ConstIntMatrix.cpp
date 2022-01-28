@@ -1,6 +1,6 @@
 #include "ConstIntMatrix.h"
 
-ConstIntMatrix::ConstIntMatrix(const ConstIntMatrix& cim, t typ = t::CONSTINTMATRIX):Variable(typ) {
+ConstIntMatrix::ConstIntMatrix(const ConstIntMatrix& cim, t typ, int l):Variable(typ,l) {
 	for (auto& i : cim.matrix) {
 		std::vector<int*> line;
 		for (auto j : i) {
@@ -35,6 +35,18 @@ ConstIntArray* ConstIntMatrix::getColumn(int i) const {
 		return new ConstIntArray(formColumn(i));
 	}
 	throw std::exception("Wrong index");
+}
+
+std::vector<std::vector<int*>> ConstIntMatrix::negativeValue() const {
+	std::vector<std::vector<int*>> res;
+	for (auto& i : matrix) {
+		std::vector<int*> line;
+		for (auto j : i) {
+			line.push_back(new int(-(*j)));
+		}
+		res.push_back(line);
+	}
+	return res;
 }
 
 std::ostream& ConstIntMatrix::print(std::ostream& o) const {

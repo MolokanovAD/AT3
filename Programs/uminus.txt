@@ -1,0 +1,14 @@
+vint vInt = -{1,2,3}
+vint sub = {5,5,5}-vInt
+cvint cpy = -sub
+int i = 0
+int c = 5
+for i = 0:3 beginfor
+	i <- c
+	c <- c + 1
+end
+int val1, int val2 = function twoVals() begin
+	int val1 = 99
+	int val2 = 100
+end
+twoVals

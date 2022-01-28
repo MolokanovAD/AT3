@@ -10,11 +10,13 @@ enum APPEAL {
 
 class Appeal :public Operation {
 protected:
-	std::string* id;
-	std::map<std::string, Node*>& varTable;
+	std::string id;
+	CallStack* callStack;
 	APPEAL type;
 public:
-	Appeal(std::string* name, Node* f, Node* s, std::map<std::string, Node*>& vTable, APPEAL t):Operation(f,s), id(name), varTable(vTable), type(t){}
+	Appeal(std::string name, Node* f, Node* s, CallStack* vTable, APPEAL t, int l = 0):Operation(f,s,l), id(name), callStack(vTable), type(t){}
+	Appeal(std::string name, Node* f, CallStack* vTable, APPEAL t, int l = 0) :Operation(f,l), id(name), callStack(vTable), type(t) {}
 	Node* execute() override;
+	virtual Appeal* clone() const override { return new Appeal(*this); }
 };
 

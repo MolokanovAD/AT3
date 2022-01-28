@@ -15,59 +15,71 @@
 
 
 [1-9][0-9]*	{
+				yylloc.last_line = yylloc.first_line = yylineno; 
 				yylval.intValue = new ConstInt(new int(std::stoi(yytext)));
 				return INTEGER;
 				}
 
-0[01]*	{
+0[01]*		{
+				yylloc.last_line = yylloc.first_line = yylineno; 
 				yylval.intValue = new ConstInt(new int(std::stoi(yytext, nullptr, 2)));
 				return INTEGER;
 			}
 
 "false"		{
+				yylloc.last_line = yylloc.first_line = yylineno; 
 				yylval.boolValue = new ConstBool(new bool(false));
 				return BOOLEAN;
 			}
 
 "true"		{
+				yylloc.last_line = yylloc.first_line = yylineno; 
 				yylval.boolValue = new ConstBool(new bool(true));
 				return BOOLEAN;
 			}
-"bool"		{ yylval.name = new std::string("");return BOOL;}
-"cbool"		{ yylval.name = new std::string("c");return BOOL;}
-"vbool"		{ yylval.name = new std::string("v");return BOOL;}
-"cvbool"	{ yylval.name = new std::string("cv");return BOOL;}
-"mbool"		{ yylval.name = new std::string("m");return BOOL;}
-"cmbool"	{ yylval.name = new std::string("cm");return BOOL;}
-"int"		{ yylval.name = new std::string("");return INT;}
-"cint"		{ yylval.name = new std::string("c");return INT;}
-"vint"		{ yylval.name = new std::string("v");return INT;}
-"cvint"		{ yylval.name = new std::string("cv");return INT;}
-"mint"		{ yylval.name = new std::string("m");return INT;}
-"cmint"		{ yylval.name = new std::string("cm");return INT;}
-"for"		{return FOR;}
-"beginfor"	{yylval.name = new std::string("for");return BEG;}
-"beginif"	{yylval.name = new std::string("if");return BEG;}
-"begin"		{yylval.name = new std::string("");return BEG;}
-"endfor"	{yylval.name = new std::string("for");return END;}
-"endif"		{yylval.name = new std::string("if");return END;}
-"end"		{yylval.name = new std::string("");return END;}
-"if"		{return IF;}
-"function"	{return FUN;}
-"<-"		return ASSIGN;
-"<<"		return LSHIFT;
-">>"		return RSHIFT;
-and|&&		return AND;
-".*"		return ELEMMUL;
-"sum"		return SUM;
+"bool"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 0; return BOOL;}
+"cbool"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 1; return BOOL;}
+"vbool"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 6; return BOOL;}
+"cvbool"	{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 7; return BOOL;}
+"mbool"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 10; return BOOL;}
+"cmbool"	{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 11; return BOOL;}
+"int"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 2; return INT;}
+"cint"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 3; return INT;}
+"vint"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 4; return INT;}
+"cvint"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 5; return INT;}
+"mint"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 8; return INT;}
+"cmint"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = 9; return INT;}
+"for"		{ yylloc.last_line = yylloc.first_line = yylineno; return FOR;}
+"beginfor"	{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("for");return BEG;}
+"beginif"	{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("if");return BEG;}
+"begin"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("");return BEG;}
+"endfor"	{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("for");return END;}
+"endif"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("if");return END;}
+"end"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.name = new std::string("");return END;}
+"if"		{ yylloc.last_line = yylloc.first_line = yylineno; return IF;}
+"function"	{ yylloc.last_line = yylloc.first_line = yylineno; return FUN;}
+"<-"		{ yylloc.last_line = yylloc.first_line = yylineno; return ASSIGN;}
+"<<"		{ yylloc.last_line = yylloc.first_line = yylineno; return LSHIFT;}
+">>"		{ yylloc.last_line = yylloc.first_line = yylineno; return RSHIFT;}
+and|&&		{ yylloc.last_line = yylloc.first_line = yylineno; return AND;}
+".*"		{ yylloc.last_line = yylloc.first_line = yylineno; return ELEMMUL; }
+"sum"		{ yylloc.last_line = yylloc.first_line = yylineno; return SUM;}
+"move"		{ yylloc.last_line = yylloc.first_line = yylineno; return MOVE;}
+"left"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = -1; return TURN;}
+"right"		{ yylloc.last_line = yylloc.first_line = yylineno; yylval.type = -2; return TURN;}
+"wall"		{ yylloc.last_line = yylloc.first_line = yylineno; return WALL;}
+"exit"		{ yylloc.last_line = yylloc.first_line = yylineno; return EXIT;}
 "...\n"		;
 
 [a-zA-Z][a-zA-Z0-9_]*	{
+							yylloc.last_line = yylloc.first_line = yylineno;
 							yylval.name = new std::string(yytext);
 							return VAR;
 						}
 
-[-\+\=*\!\,:\{\}\<\>\(\)\[\]\'\n]	{return *yytext;}
+[-\+\=*\!\,:\{\}\<\>\(\)\[\]\']	{ yylloc.last_line = yylloc.first_line = yylineno; return *yytext;}
+
+\n			{ yylloc.last_line = yylloc.first_line = yylineno; return *yytext;}
 
 [ \t]		;
 

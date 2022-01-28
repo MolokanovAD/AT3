@@ -3,8 +3,14 @@
 Node* ElemMult::execute() {
 	/*auto f = first->execute();
 	auto s = second->execute();*/
-	Node* f = first;
-	Node* s = second;
+	Node* f = nullptr, * s = nullptr;
+	try {
+		f = operand[0]->execute();
+		s = operand[1]->execute();
+	}
+	catch (std::exception& ex) {
+		throw ex;
+	}
 	auto m1 = dynamic_cast<ConstIntMatrix*>(f);
 	auto m2 = dynamic_cast<ConstIntMatrix*>(s);
 	if (m1 && m2) {//both matrix
@@ -44,5 +50,6 @@ Node* ElemMult::execute() {
 		}
 		return new IntArray(res);
 	}
-	throw std::exception("Wrong operands");
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(line);
+	throw std::exception(errStr.c_str());
 }

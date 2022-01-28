@@ -1,12 +1,18 @@
 #include "Subtract.h"
 
 Node* Subtract::execute() {
-    /*Node* f = first->execute();
-    Node* s = second->execute();*/
-    Node* f = first;
-    Node* s = second;
+    Node* f = nullptr, * s = nullptr;
+    try {
+        f = operand[0]->execute();
+        s = operand[1]->execute();
+    }
+    catch (std::exception& ex) {
+        throw ex;
+    }
+   /* Node* f = operand[0];
+    Node* s = operand[1];*/
     if (compatible(t::CONSTINT, f, s))
-        return new Int(new int(getInt(first) - getInt(second)));
+        return new Int(new int(getInt(f) - getInt(s)),line);
     if (compatible(t::CONSTINTARR, f, s)) {
         auto v1 = dynamic_cast<ConstIntArray*>(f)->getValue();
         auto v2 = dynamic_cast<ConstIntArray*>(s)->getValue();
@@ -19,7 +25,7 @@ Node* Subtract::execute() {
             if (i < v2.size())
                 *res[i] -= *v2[i];
         }
-        return new IntArray(res);
+        return new IntArray(res,line);
     }
 
     if (compatible(t::CONSTINTMATRIX, f, s)) {
@@ -51,7 +57,8 @@ Node* Subtract::execute() {
             }
         }*/
 
-        return new IntMatrix(res);
+        return new IntMatrix(res,line);
     }
-    throw std::exception("Wrong parameters");
+    std::string errStr = "Error: Type mismatch, line " + std::to_string(line);
+    throw std::exception(errStr.c_str());
 }

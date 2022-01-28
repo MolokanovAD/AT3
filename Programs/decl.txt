@@ -1,0 +1,9 @@
+vbool vBool = { true,false,false }
+cmint cMInt = {{1+8,2,3},{8,3,6}}
+vint vInt1 = {1,1}
+vint vInt2 = {5,5}
+vint vInt3 = {9,9}
+vint vvvv = vInt1
+cmint cm = {vInt1, vInt2,vInt3}
+cbool cBool= !false
+cvint cVint = {3,5 + 8,9,10,5 - 4}

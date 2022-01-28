@@ -1,0 +1,87 @@
+function goDown() begin
+	if move({0,1}) beginif
+		goDown
+	endif
+end
+function finishLine(int x, int y) begin
+	if exit beginif
+		bool mv = move({x,y})
+		finishLine x, y
+	endif
+end
+int xDir, int yDir = function turnLeft(int x, int y) begin
+			int xDir = 0
+			int yDir = 0
+			if x > 0 beginif
+				yDir <- -1
+			endif
+			if x < 0 beginif
+				yDir <- 1
+			endif
+			if y > 0 beginif
+				xDir <- 1
+			endif
+			if y < 0 beginif
+				xDir <- -1
+			endif
+			left
+end
+int xDir, int yDir = function turnRight(int x, int y) begin
+			int xDir = 0
+			int yDir = 0
+			if x > 0 beginif
+				yDir <- 1
+			endif
+			if x < 0 beginif
+				yDir <- -1
+			endif
+			if y > 0 beginif
+				xDir <- -1
+			endif
+			if y < 0 beginif
+				xDir <- 1
+			endif
+			right
+end
+bool foundExtract, int xDir, int yDir = function repeat(int x, int y) begin
+	turnLeft x, y
+	bool foundExtract = exit
+	if !foundExtract beginif
+		turnRight xDir, yDir
+		foundExtract <- exit
+		if !foundExtract beginif
+			turnRight xDir, yDir
+			foundExtract <- exit
+			if !foundExtract beginif
+				if !move({xDir,yDir}) beginif
+					turnLeft xDir, yDir
+					if !move({xDir,yDir}) beginif
+						turnLeft xDir, yDir
+						if !move({xDir,yDir}) beginif
+							turnLeft xDir, yDir
+							bool mv = move({xDir,yDir})
+							if !foundExtract beginif
+								repeat xDir, yDir
+							endif
+						endif
+						if !foundExtract beginif
+							repeat xDir, yDir
+						endif
+					endif
+					if !foundExtract beginif
+						repeat xDir, yDir
+					endif
+				endif
+				if !foundExtract beginif
+					repeat xDir, yDir
+				endif
+			endif
+		endif
+	endif
+end
+goDown
+int xDir = 0
+int yDir = 1
+turnLeft xDir, yDir
+repeat xDir, yDir
+finishLine xDir, yDir

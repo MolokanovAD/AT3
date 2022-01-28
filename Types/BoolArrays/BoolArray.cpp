@@ -10,13 +10,6 @@ void BoolArray::addElement(Node* e) {
 		throw std::exception("Wrong type");
 }
 
-BoolArray* BoolArray::clone() const {
-	std::vector<bool*> v;
-	for (auto ptr : value)
-		v.push_back(new bool(*ptr));
-	return new BoolArray(v);
-}
-
 void BoolArray::setValue(std::vector<bool*> v) {
 	if (value.size() != v.size())
 		throw std::exception("Wrong size");

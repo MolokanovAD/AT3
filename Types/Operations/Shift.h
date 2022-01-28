@@ -5,7 +5,8 @@ class Shift : public Operation {
 protected:
 	bool dir;
 public:
-	Shift(Node* f, bool d) :Operation(f, nullptr), dir(d) {}
+	Shift(Node* f, bool d, int l = 0) :Operation(f,l), dir(d) {}
 	Node* execute() override;
+	virtual Shift* clone() const override { return new Shift(*this); }
 };
 

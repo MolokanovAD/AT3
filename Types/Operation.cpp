@@ -1,4 +1,5 @@
 #include "Operation.h"
+
 int Operation::getInt(Node* p) {
     auto cInt1 = dynamic_cast<ConstInt*>(p);
     if (cInt1)
@@ -12,13 +13,21 @@ int Operation::getInt(Node* p) {
     }
 }
 
-//Operation::Operation(Node* f, Node* s) {
-//    if (dynamic_cast<Operation*>(f))
-//        first = f;
-//    else if (dynamic_cast<Variable*>(f))
-//        first = f->clone();
-//    if (dynamic_cast<Operation*>(s))
-//        second = s;
-//    else if (dynamic_cast<Variable*>(s))
-//        second = s->clone();
-//}
+Operation::Operation(const Operation& op) {
+    for (auto i : op.operand) {
+        operand.push_back(i->clone());
+    }
+}
+
+Node* Operation::operator[](int index) {
+    if (index > -1 && index < operand.size()) {
+        return operand[index];
+    }
+    throw std::exception("Out of range");
+}
+
+Operation::~Operation() {
+    for (auto& i : operand)
+        delete i;
+    operand.clear();
+}

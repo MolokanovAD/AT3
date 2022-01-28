@@ -15,16 +15,18 @@ enum t {
 	INTMATRIX,
 	CONSTINTMATRIX,
 	BOOLMATRIX,
-	CONSTBOOLMATRIX
-	
+	CONSTBOOLMATRIX,
+	OPERATION
 };
 class Node {
 protected:
+	int line;
 	t nodeType;
 public:
-	Node() {};
-	Node(t typ): nodeType(typ) {};
+	Node(int l = 0): line(l) {};
+	Node(t typ, int l = 0): nodeType(typ),line(l) {};
 	virtual Node* execute() = 0;
+	int getLine() const { return line; }
 	t type() { return nodeType; }
 	friend std::ostream& operator<<(std::ostream& o, const Node& node);
 	virtual void dump() {}

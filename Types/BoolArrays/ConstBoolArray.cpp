@@ -1,6 +1,6 @@
 #include "ConstBoolArray.h"
 
-ConstBoolArray::ConstBoolArray(const ConstBoolArray& cba, t typ) : Variable(typ) {
+ConstBoolArray::ConstBoolArray(const ConstBoolArray& cba, t typ, int l) : Variable(typ,l) {
 	for (auto ptr : cba.value)
 		value.push_back(new bool(*ptr));
 }

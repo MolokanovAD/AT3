@@ -1,8 +1,15 @@
 #include "Transposition.h"
 
 Node* Transposition::execute() {
-    //auto mInt = dynamic_cast<ConstIntMatrix*>(first->execute());
-    auto mInt = dynamic_cast<ConstIntMatrix*>(first);
+    Node* p = nullptr;
+    try {
+        p = operand[0]->execute();
+    }
+    catch (std::exception& ex) {
+        throw ex;
+    }
+    auto mInt = dynamic_cast<ConstIntMatrix*>(p);
+    //auto mInt = dynamic_cast<ConstIntMatrix*>(operand[0]);
     if (mInt) {
         auto m = mInt->getMatrix();
         std::vector<std::vector<int*>> res(m.front().size(), std::vector<int*>(m.size(), nullptr));
@@ -11,10 +18,10 @@ Node* Transposition::execute() {
                 res[j][i] = new int(*m[i][j]);
             }
         }
-        return new IntMatrix(res);
+        return new IntMatrix(res,line);
     }
-    //auto mBool = dynamic_cast<ConstBoolMatrix*>(first->execute());
-    auto mBool = dynamic_cast<ConstBoolMatrix*>(first);
+    auto mBool = dynamic_cast<ConstBoolMatrix*>(p);
+    //auto mBool = dynamic_cast<ConstBoolMatrix*>(operand[0]);
     if (mBool) {
         auto m = mBool->getMatrix();
         std::vector<std::vector<bool*>> res(m.front().size(), std::vector<bool*>(m.size(), nullptr));
@@ -23,7 +30,8 @@ Node* Transposition::execute() {
                 res[j][i] = new bool(*m[i][j]);
             }
         }
-        return new BoolMatrix(res);
+        return new BoolMatrix(res,line);
     }
-    throw std::exception("Wrong operand type");
+    std::string errStr = "Error: Type mismatch, line " + std::to_string(line);
+    throw std::exception(errStr.c_str());
 }
