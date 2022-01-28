@@ -2502,7 +2502,7 @@ yyreturn:
 
 
 void yyerror(const char* s) {
-	//std::cerr << s << std::endl;
+	std::cerr << s << std::endl;
 }
 
 int main(int argc, const char* argv) {
@@ -2512,7 +2512,7 @@ int main(int argc, const char* argv) {
 	catch(std::exception& ex){
 		std::cout << ex.what();
 	}
-	fopen_s (&yyin, "Programs/funcs.txt", "r");
+	fopen_s (&yyin, "Programs/appeal.txt", "r");
 	if (yyin)   
 		yyparse();
 	return 0;

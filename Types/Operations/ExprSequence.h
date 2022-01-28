@@ -8,5 +8,6 @@ public:
 	void pushExpr(Node* expr) { operand.push_back(expr); }
 	Node* execute() override;
 	virtual ExprSequence* clone() const override { return new ExprSequence(*this); }
+	virtual ~ExprSequence() {}
 };
 

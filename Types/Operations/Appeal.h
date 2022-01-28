@@ -18,5 +18,6 @@ public:
 	Appeal(std::string name, Node* f, CallStack* vTable, APPEAL t, int l = 0) :Operation(f,l), id(name), callStack(vTable), type(t) {}
 	Node* execute() override;
 	virtual Appeal* clone() const override { return new Appeal(*this); }
+	virtual ~Appeal() {}
 };
 

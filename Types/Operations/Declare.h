@@ -21,4 +21,5 @@ public:
 	bool fun()const { return callStack; }
 	Node* execute() override;
 	virtual Declare* clone() const override { return new Declare(*this); }
+	virtual ~Declare() {}
 };

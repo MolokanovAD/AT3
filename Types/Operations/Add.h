@@ -7,4 +7,5 @@ public:
 	Node* execute() override;
 	std::ostream& print(std::ostream& o) const  override { return o << "Add: "; }
 	virtual Add* clone() const override { return new Add(*this); }
+	virtual ~Add() {}
 };

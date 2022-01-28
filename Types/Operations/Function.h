@@ -15,7 +15,7 @@ public:
 	Node* returnValue(int index);
 	std::string getName() const { return name; }
 	virtual Function* clone() const override { return new Function(*this); }
-	virtual ~Function();
+	virtual ~Function() {}
 };
 
 typedef std::stack<std::map<std::string, Function*>*> FunStack;

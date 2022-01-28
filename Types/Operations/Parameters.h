@@ -7,5 +7,6 @@ public:
 	void addParameter(Node* p) { operand.push_back(p); }
 	Node* execute() override { return nullptr; }
 	virtual Parameters* clone() const override { return new Parameters(*this); }
+	virtual ~Parameters() {}
 };
 

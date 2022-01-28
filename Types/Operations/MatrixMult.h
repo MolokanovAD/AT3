@@ -7,5 +7,6 @@ public:
 	MatrixMult(Node* f, Node* s, int l = 0) : Operation(f, s, l) {}
 	Node* execute() override;
 	virtual MatrixMult* clone() const override { return new MatrixMult(*this); }
+	virtual ~MatrixMult() {}
 };
 
