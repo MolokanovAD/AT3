@@ -7,7 +7,7 @@ Node* Appeal::execute() {
 			case COORDINATES:
 				if (dynamic_cast<ConstIntMatrix*>(it->second)) {
 					try {
-						return getIntValue(it->second, operand[0]->execute(), operand[1]->execute());
+						return getIntValue(it->second, operand[0]->execute(), operand[1]->execute(), line);
 					}
 					catch (std::exception& ex) {
 						throw ex;
@@ -15,7 +15,7 @@ Node* Appeal::execute() {
 				}
 				else if (dynamic_cast<ConstBoolMatrix*>(it->second)) {
 					try {
-						return getBoolValue(it->second, operand[0]->execute(), operand[1]->execute());
+						return getBoolValue(it->second, operand[0]->execute(), operand[1]->execute(), line);
 					}
 					catch (std::exception& ex) {
 						throw ex;
@@ -33,7 +33,7 @@ Node* Appeal::execute() {
 					}
 					if (compatible(t::CONSTINT, p)) {
 						try {
-							return getVec(it->second, p, 0);
+							return getVec(it->second, p, 0, line);
 						}
 						catch (std::exception& ex) {
 							throw ex;
@@ -42,7 +42,7 @@ Node* Appeal::execute() {
 					else {
 						if (dynamic_cast<ConstIntArray*>(p)) {
 							try {
-								return getMatrix(it->second, p, 0);
+								return getMatrix(it->second, p, 0, line);
 							}
 							catch (std::exception& ex) {
 								throw ex;
@@ -62,7 +62,7 @@ Node* Appeal::execute() {
 					}
 					if (compatible(t::CONSTINT, p)) {
 						try {
-							return getVec(it->second, p, 1);
+							return getVec(it->second, p, 1, line);
 						}
 						catch (std::exception& ex) {
 							throw ex;
@@ -71,7 +71,7 @@ Node* Appeal::execute() {
 					else {
 						if (dynamic_cast<ConstIntArray*>(p)) {
 							try {
-								return getMatrix(it->second, p, 1);
+								return getMatrix(it->second, p, 1, line);
 							}
 							catch (std::exception& ex) {
 								throw ex;
@@ -80,16 +80,46 @@ Node* Appeal::execute() {
 					}
 				}
 				break;
-			case LOGICAL:
-				try {
-					return matrixFromLogical(it->second, operand[0]->execute());
+			case LOGICAL: {
+					Node* p = nullptr;
+					try {
+						p = operand[0]->execute();
+					}
+					catch (std::exception& ex) {
+						throw ex;
+					}
+					try {
+						return matrixFromLogical(it->second, p, line);
+					}
+					catch (std::exception& ex1) {
+						try {
+							return arrayFromArray(it->second, p, line);
+						}
+						catch (std::exception& ex2) {
+							int i = 0;
+							try {
+								i = toInt(p);
+							}
+							catch (std::exception& ex) {
+								throw ex2;
+							}
+							try {
+								return valFromArray(it->second, i, line);
+							}
+							catch (std::exception& ex3) {
+								throw ex3;
+							}
+						}
+						throw ex1;
+					}
+					break;
 				}
-				catch (std::exception& ex) {
-					throw ex;
-				}
-				break;
 			default:
 				break;
 		}
+	}
+	else {
+		std::string errStr = "Error: Unknown identificator \"" + id + "\", line " + std::to_string(line);
+		throw std::exception(errStr.c_str());
 	}
 }

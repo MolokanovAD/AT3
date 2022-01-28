@@ -10,6 +10,7 @@ public:
 	std::vector<int*> getValue() const { return value; }
 	int operator[](int index) const;
 	std::vector<int*> pop() { std::vector<int*> v = value; value.clear(); return v; }
+	int* getVal(int i);
 	virtual void dump() override { value.clear(); }
 	std::vector<int*> negativeValue() const;
 	ConstIntArray* clone() const override { return new ConstIntArray(*this,nodeType,line); }

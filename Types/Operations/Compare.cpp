@@ -1,8 +1,6 @@
 #include "Compare.h"
 
 Node* Compare::execute() {
-    /*Node* f = first->execute();
-    Node* s = second->execute();*/
     Node* f = nullptr, * s = nullptr;
     try {
         f = operand[0]->execute();

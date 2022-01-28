@@ -1,4 +1,5 @@
 #include "Declare.h"
+#include "Appeal.h"
 
 void Declare::setExpr(Node* e) {
 	if (operand.size()) {
@@ -20,6 +21,8 @@ Node* Declare::execute() {
 		Node* p = nullptr;
 		try {
 			p = operand[0]->execute();
+			if (dynamic_cast<Appeal*>(operand[0]))
+				p = p->clone();
 		}
 		catch (std::exception& ex) {
 			throw ex;
@@ -28,33 +31,83 @@ Node* Declare::execute() {
 			if ((*callStack->top()).find(id) == (*callStack->top()).end()) {
 				switch (type) {
 					case VARBOOL:
-						return (*callStack->top()).insert({ id, new Bool(new bool(toInt(p)), line) }).first->second;
+						(*callStack->top()).insert({ id, new Bool(new bool(toInt(p)), line) });
+						break;
 					case CONSTBOOL:
-						return (*callStack->top()).insert({ id, new ConstBool(new bool(toInt(p)),t::CONSTBOOL, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstBool(new bool(toInt(p)),t::CONSTBOOL, line) });
+						break;
 					case VARINT:
-						return (*callStack->top()).insert({ id, new Int(new int(toInt(p)), line) }).first->second;
+						(*callStack->top()).insert({ id, new Int(new int(toInt(p)), line) });
+						break;
 					case CONSTINT:
-						return (*callStack->top()).insert({ id, new ConstInt(new int(toInt(p)),t::CONSTINT, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstInt(new int(toInt(p)),t::CONSTINT, line) });
+						break;
 					case INTARR:
-						return (*callStack->top()).insert({ id, new IntArray(*dynamic_cast<ConstIntArray*>(p), line) }).first->second;
+						(*callStack->top()).insert({ id, new IntArray(dynamic_cast<ConstIntArray*>(p)->pop(), line) });
+						break;
 					case CONSTINTARR:
-						return (*callStack->top()).insert({ id, new ConstIntArray(*dynamic_cast<ConstIntArray*>(p),t::CONSTINTARR, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstIntArray(dynamic_cast<ConstIntArray*>(p)->pop(),t::CONSTINTARR, line) });
+						break;
 					case BOOLARR:
-						return (*callStack->top()).insert({ id, new BoolArray(*dynamic_cast<ConstBoolArray*>(p), line) }).first->second;
+						(*callStack->top()).insert({ id, new BoolArray(dynamic_cast<ConstBoolArray*>(p)->pop(), line) });
+						break;
 					case CONSTBOOLARR:
-						return (*callStack->top()).insert({ id, new ConstBoolArray(*dynamic_cast<ConstBoolArray*>(p),t::CONSTBOOLARR, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstBoolArray(dynamic_cast<ConstBoolArray*>(p)->pop(),t::CONSTBOOLARR, line) });
+						break;
 					case INTMATRIX:
-						return (*callStack->top()).insert({ id, new IntMatrix(*dynamic_cast<ConstIntMatrix*>(p), line) }).first->second;
+						(*callStack->top()).insert({ id, new IntMatrix(dynamic_cast<ConstIntMatrix*>(p)->pop(), line) });
+						break;
 					case CONSTINTMATRIX:
-						return (*callStack->top()).insert({ id, new ConstIntMatrix(*dynamic_cast<ConstIntMatrix*>(p),t::CONSTINTMATRIX, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(p)->pop(),t::CONSTINTMATRIX, line) });
+						break;
 					case BOOLMATRIX:
-						return (*callStack->top()).insert({ id, new BoolMatrix(*dynamic_cast<ConstBoolMatrix*>(p), line) }).first->second;
+						(*callStack->top()).insert({ id, new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(p)->pop(), line) });
+						break;
 					case CONSTBOOLMATRIX:
-						return (*callStack->top()).insert({ id, new ConstBoolMatrix(*dynamic_cast<ConstBoolMatrix*>(p),t::CONSTBOOLMATRIX, line) }).first->second;
+						(*callStack->top()).insert({ id, new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(p)->pop(),t::CONSTBOOLMATRIX, line) });
+						break;
+				/*switch (type) {
+					case VARBOOL:
+						(*callStack->top()).insert({ id, new Bool(new bool(toInt(p)), line) });
+						break;
+					case CONSTBOOL:
+						(*callStack->top()).insert({ id, new ConstBool(new bool(toInt(p)),t::CONSTBOOL, line) });
+						break;
+					case VARINT:
+						(*callStack->top()).insert({ id, new Int(new int(toInt(p)), line) });
+						break;
+					case CONSTINT:
+						(*callStack->top()).insert({ id, new ConstInt(new int(toInt(p)),t::CONSTINT, line) });
+						break;
+					case INTARR:
+						(*callStack->top()).insert({ id, new IntArray(*dynamic_cast<ConstIntArray*>(p), line) });
+						break;
+					case CONSTINTARR:
+						(*callStack->top()).insert({ id, new ConstIntArray(*dynamic_cast<ConstIntArray*>(p),t::CONSTINTARR, line) });
+						break;
+					case BOOLARR:
+						(*callStack->top()).insert({ id, new BoolArray(*dynamic_cast<ConstBoolArray*>(p), line) });
+						break;
+					case CONSTBOOLARR:
+						(*callStack->top()).insert({ id, new ConstBoolArray(*dynamic_cast<ConstBoolArray*>(p),t::CONSTBOOLARR, line) });
+						break;
+					case INTMATRIX:
+						(*callStack->top()).insert({ id, new IntMatrix(*dynamic_cast<ConstIntMatrix*>(p), line) });
+						break;
+					case CONSTINTMATRIX:
+						(*callStack->top()).insert({ id, new ConstIntMatrix(*dynamic_cast<ConstIntMatrix*>(p),t::CONSTINTMATRIX, line) });
+						break;
+					case BOOLMATRIX:
+						(*callStack->top()).insert({ id, new BoolMatrix(*dynamic_cast<ConstBoolMatrix*>(p), line) });
+						break;
+					case CONSTBOOLMATRIX:
+						(*callStack->top()).insert({ id, new ConstBoolMatrix(*dynamic_cast<ConstBoolMatrix*>(p),t::CONSTBOOLMATRIX, line) });
+						break;*/
 					default:
 						std::string errStr = "Error: Unknown variable type, line " + std::to_string(line);
 						throw std::exception(errStr.c_str());
 				}
+				return nullptr;
 			}
 			else {
 				std::string errStr = "Error: Redeclaration, line " + std::to_string(line);
@@ -74,6 +127,7 @@ Node* Declare::execute() {
 		}
 		operand[0] = nullptr;
 		operand.clear();
+		return nullptr;
 		/*try {
 			funStack->top()->insert({ id,dynamic_cast<Function*>(operand[0]) });
 			operand[0] = nullptr;

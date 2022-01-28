@@ -1416,21 +1416,21 @@ yydestruct (yymsg, yytype, yyvaluep, yylocationp)
       case 8: /* VAR */
 /* Line 1398 of yacc.c  */
 #line 72 "parser.y"
-        { delete ((*yyvaluep).name);};
+        { delete ((*yyvaluep).name); };
 /* Line 1398 of yacc.c  */
 #line 1422 "file.tab.cpp"
         break;
       case 9: /* BEG */
 /* Line 1398 of yacc.c  */
 #line 72 "parser.y"
-        { delete ((*yyvaluep).name);};
+        { delete ((*yyvaluep).name); };
 /* Line 1398 of yacc.c  */
 #line 1429 "file.tab.cpp"
         break;
       case 10: /* END */
 /* Line 1398 of yacc.c  */
 #line 72 "parser.y"
-        { delete ((*yyvaluep).name);};
+        { delete ((*yyvaluep).name); };
 /* Line 1398 of yacc.c  */
 #line 1436 "file.tab.cpp"
         break;
@@ -1861,7 +1861,7 @@ yyreduce:
 									try {
 										(yyvsp[(1) - (1)].node)->execute();
 									} catch(std::exception& ex) {
-										std::cout << ex.what() << std::endl;
+										std::cerr << ex.what() << std::endl;
 									}
 									printVarTable(callStack.top());
 									freeStacks(&callStack,&funStack);
@@ -2221,7 +2221,7 @@ yyreduce:
 #line 272 "parser.y"
     {
 															if (*(yyvsp[(3) - (6)].name) == "for" || *(yyvsp[(6) - (6)].name) == "for") {
-																//..
+																std::cerr << "Warning: beginfor and endfor shouldn't be used with if, line " << (yylsp[(1) - (6)]).first_line << std::endl;
 															}
 															else
 																(yyval.node) = new If((yyvsp[(2) - (6)].node), (yyvsp[(5) - (6)].node), (yylsp[(1) - (6)]).first_line);
@@ -2235,7 +2235,7 @@ yyreduce:
 #line 285 "parser.y"
     {
 																				if (*(yyvsp[(7) - (10)].name) == "if" || *(yyvsp[(10) - (10)].name) == "if") {
-																					//...
+																					std::cerr << "Warning: beginif and endif shouldn't be used with for, line " << (yylsp[(1) - (10)]).first_line << std::endl;
 																				}
 																				else
 																					(yyval.node) = new For(*(yyvsp[(2) - (10)].name), (yyvsp[(4) - (10)].node), (yyvsp[(6) - (10)].node), (yyvsp[(9) - (10)].node), &callStack, (yylsp[(1) - (10)]).first_line);
@@ -2502,7 +2502,7 @@ yyreturn:
 
 
 void yyerror(const char* s) {
-	std::cerr << s << std::endl;
+	//std::cerr << s << std::endl;
 }
 
 int main(int argc, const char* argv) {
@@ -2512,7 +2512,7 @@ int main(int argc, const char* argv) {
 	catch(std::exception& ex){
 		std::cout << ex.what();
 	}
-	fopen_s (&yyin, "Programs/algorithm.txt", "r");
+	fopen_s (&yyin, "Programs/funcs.txt", "r");
 	if (yyin)   
 		yyparse();
 	return 0;

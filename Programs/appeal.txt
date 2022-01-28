@@ -21,3 +21,13 @@ mbool bmatrixStrings1 = mBool(,{1,2})
 mbool bmatrixStrings2 = mBool(:,{1,2})
 mbool bmatrixStringsCopy = bmatrixStrings2
 bmatrixStringsCopy(0,0) <- true
+cvint cVInt = {0,1,2,3,4,5}
+cvbool logicalVec = {true,false,false,true,true,false}
+vint numbers = {0,3,4}
+vint intVecFromLogical = cVInt(logicalVec)
+vint intVecFromnumbers = cVInt(numbers)
+mbool Z = {{false,false},{false,true}}
+cvbool newCol = {true,true}
+Z(0,:)<-newCol
+vint numbers2 = {11,12,13}
+int v = numbers(1)

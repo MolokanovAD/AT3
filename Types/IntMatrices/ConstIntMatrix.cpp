@@ -18,9 +18,9 @@ std::vector<int*> ConstIntMatrix::formColumn(int i) const {
 	return res;
 }
 
-ConstInt* ConstIntMatrix::getValue(int i, int j) const {
+ConstInt* ConstIntMatrix::getValue(int i, int j, int l) const {
 	if (i >= 0 && i < matrix.size() && j >= 0 && j < matrix[i].size())
-		return new ConstInt(matrix[i][j]);
+		return new ConstInt(matrix[i][j],t::CONSTINT,l);
 	throw std::exception("Wrong index");
 }
 

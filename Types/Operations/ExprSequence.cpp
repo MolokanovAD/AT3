@@ -44,16 +44,16 @@ Node* ExprSequence::execute() {
 				Node* e = operand[i]->execute();
 				switch (res->type()) {
 					case INTARR:
-						dynamic_cast<IntArray*>(res)->addElement(e);
+						dynamic_cast<IntArray*>(res)->addElement(e, line);
 						break;
 					case BOOLARR:
-						dynamic_cast<BoolArray*>(res)->addElement(e);
+						dynamic_cast<BoolArray*>(res)->addElement(e, line);
 						break;
 					case INTMATRIX:
-						dynamic_cast<IntMatrix*>(res)->addElement(e);
+						dynamic_cast<IntMatrix*>(res)->addElement(e, line);
 						break;
 					case BOOLMATRIX:
-						dynamic_cast<BoolMatrix*>(res)->addElement(e);
+						dynamic_cast<BoolMatrix*>(res)->addElement(e, line);
 						break;
 					default:
 						std::string errStr = "Error: Unknown variable type, line " + std::to_string(line);

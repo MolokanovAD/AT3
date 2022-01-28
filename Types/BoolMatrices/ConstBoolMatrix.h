@@ -9,7 +9,7 @@ protected:
 public:
 	ConstBoolMatrix(std::vector<std::vector<bool*>> m, t typ = CONSTBOOLMATRIX, int l = 0) : Variable(typ,l), matrix(m) {}
 	ConstBoolMatrix(const ConstBoolMatrix& cbm, t typ = t::CONSTBOOLMATRIX, int l = 0);
-	virtual ConstBool* getValue(int i, int j) const;
+	virtual ConstBool* getValue(int i, int j, int l) const;
 	virtual ConstBoolArray* getRow(int i) const;
 	virtual ConstBoolArray* getColumn(int i) const;
 	std::vector<std::vector<bool*>> getMatrix() { return matrix; }

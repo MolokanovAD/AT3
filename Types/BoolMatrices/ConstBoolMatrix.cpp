@@ -18,9 +18,9 @@ std::vector<bool*> ConstBoolMatrix::formColumn(int i) const{
 	return res;
 }
 
-ConstBool* ConstBoolMatrix::getValue(int i, int j) const {
+ConstBool* ConstBoolMatrix::getValue(int i, int j, int l) const {
 	if (i >= 0 && i < matrix.size() && j >= 0 && j < matrix[i].size())
-		return new ConstBool(matrix[i][j]);
+		return new ConstBool(matrix[i][j],t::CONSTBOOL,l);
 	throw std::exception("Wrong index");
 }
 

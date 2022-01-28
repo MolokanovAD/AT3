@@ -9,6 +9,7 @@ public:
 	size_t size() { return value.size(); }
 	std::vector<bool*> getValue() const { return value; }
 	std::vector<bool*> pop() { std::vector<bool*> v = value; value.clear(); return v; }
+	bool* getVal(int i);
 	virtual void dump() override { value.clear(); }
 	ConstBoolArray* clone() const override { return new ConstBoolArray(*this,nodeType,line); }
 	std::ostream& print(std::ostream& o) const override;

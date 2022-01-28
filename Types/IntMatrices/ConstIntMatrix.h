@@ -9,7 +9,7 @@ protected:
 public:
 	ConstIntMatrix(std::vector<std::vector<int*>> m, t typ = t::CONSTINTMATRIX, int l = 0) : Variable(typ,l), matrix(m) {}
 	ConstIntMatrix(const ConstIntMatrix& cim, t typ = t::CONSTINTMATRIX, int l = 0);
-	virtual ConstInt* getValue(int i, int j) const;
+	virtual ConstInt* getValue(int i, int j, int l) const;
 	virtual ConstIntArray* getRow(int i) const;
 	virtual ConstIntArray* getColumn(int i) const;
 	std::vector<std::vector<int*>> getMatrix() { return matrix; }

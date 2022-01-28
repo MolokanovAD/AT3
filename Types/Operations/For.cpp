@@ -19,4 +19,5 @@ Node* For::execute() {
 	catch (std::exception& ex) {
 		throw ex;
 	}
+	return nullptr;
 }

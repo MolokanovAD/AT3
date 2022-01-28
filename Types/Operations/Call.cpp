@@ -20,7 +20,7 @@ void Call::formFunFrame() {
 }
 
 Node* Call::execute() {
-	std::cout << "_______________________" << id << "_______________________" << std::endl;
+	//std::cout << "_______________________" << id << "_______________________" << std::endl;
 	auto it = funStack->top()->find(id);
 	if (it == funStack->top()->end()) {
 		std::string errStr = "Error: Unknown identificator \"" + id + "\", line " + std::to_string(line);
@@ -82,7 +82,8 @@ Node* Call::execute() {
 			deleteFrame();
 			throw std::exception(errStr.c_str());
 		}
-		if(!compatible(retVal->varType(), it->second)) {
+		//if(!compatible(retVal->varType(), it->second)) {
+		if (retVal->varType() != it->second->type()) {
 			std::string errStr = "Error: Return value type mismatch, line " + std::to_string(line);
 			deleteFrame();
 			throw std::exception(errStr.c_str());
@@ -97,7 +98,7 @@ Node* Call::execute() {
 	for (int i = 0; i < fun->returnValuesAmount(); i++) {//declaring returned values
 		Declare* retVal = dynamic_cast<Declare*>(fun->returnValue(i));
 		try {
-			retVal->execute();//try catch
+			retVal->execute();
 		}
 		catch (std::runtime_error& e) {
 			Assign* as = new Assign(retVal->getName(), retVal->getValue(), callStack);

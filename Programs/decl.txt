@@ -7,3 +7,4 @@ vint vvvv = vInt1
 cmint cm = {vInt1, vInt2,vInt3}
 cbool cBool= !false
 cvint cVint = {3,5 + 8,9,10,5 - 4}
+mint mInt = {{1,2},{3,4}}

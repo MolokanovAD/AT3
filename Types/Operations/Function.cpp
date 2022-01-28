@@ -24,3 +24,6 @@ Node* Function::returnValue(int index) {
 	if (index > -1 && index < ret->size())
 		return (*ret)[index];
 }
+
+Function::~Function() {
+}

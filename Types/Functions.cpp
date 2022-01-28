@@ -52,84 +52,6 @@ int toInt(Node* n) {
 	throw std::exception("Not compatible");
 }
 
-
-//bool insertVar(t type, std::string* id, Node* expr, std::map<std::string, Node*>& varTable) {
-//	if (compatible(type, expr)) {
-//		if (varTable.find(*id) == varTable.end()) {
-//			switch (type) {
-//				case VARBOOL:
-//					return varTable.insert({ *id, new Bool(new bool(toInt(expr))) }).second;
-//				case CONSTBOOL:
-//					return varTable.insert({ *id, new ConstBool(new bool(toInt(expr))) }).second;
-//				case VARINT:
-//					return varTable.insert({ *id, new Int(new int(toInt(expr))) }).second;
-//				case CONSTINT:
-//					return varTable.insert({ *id, new ConstInt(new int(toInt(expr))) }).second;
-//				case INTARR:
-//					return varTable.insert({ *id, new IntArray(dynamic_cast<ConstIntArray*>(expr)->pop()) }).second;
-//				case CONSTINTARR:
-//					return varTable.insert({ *id, new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->pop()) }).second;
-//				case BOOLARR:
-//					return varTable.insert({ *id, new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop()) }).second;
-//				case CONSTBOOLARR:
-//					return varTable.insert({ *id, new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop()) }).second;
-//				case INTMATRIX:
-//					return varTable.insert({ *id, new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop()) }).second;
-//				case CONSTINTMATRIX:
-//					return varTable.insert({ *id, new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop()) }).second;
-//				case BOOLMATRIX:
-//					return varTable.insert({ *id, new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop()) }).second;
-//				case CONSTBOOLMATRIX:
-//					return varTable.insert({ *id, new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop()) }).second;
-//				default:
-//					throw std::exception(std::to_string(expr->getLine()).c_str());
-//			}
-//		}
-//	}
-//	else {
-//		std::string errStr = "Error: type mismatch, line " + std::to_string(expr->getLine());
-//		throw std::exception(errStr.c_str());
-//	}
-//}
-
-//Node* assignVar(t type, Node* expr) {
-//	if (compatible(type, expr)) {
-//		switch (type) {
-//			case VARBOOL:
-//				return new Bool(new bool(toInt(expr)));
-//			/*case CONSTBOOL:
-//				return  new ConstBool(new bool(toInt(expr)));*/
-//			case VARINT:
-//				return new Int(new int(toInt(expr)));
-//			/*case CONSTINT:
-//				return new ConstInt(new int(toInt(expr)));*/
-//			case INTARR:
-//				return new IntArray(dynamic_cast<ConstIntArray*>(expr)->pop());
-//			/*case CONSTINTARR:
-//				return new ConstIntArray(dynamic_cast<ConstIntArray*>(expr)->pop());*/
-//			case BOOLARR:
-//				return new BoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop());
-//			/*case CONSTBOOLARR:
-//				return new ConstBoolArray(dynamic_cast<ConstBoolArray*>(expr)->pop());*/
-//			case INTMATRIX:
-//				return new IntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop());
-//			/*case CONSTINTMATRIX:
-//				return new ConstIntMatrix(dynamic_cast<ConstIntMatrix*>(expr)->pop());*/
-//			case BOOLMATRIX:
-//				return new BoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop());
-//			/*case CONSTBOOLMATRIX:
-//				return new ConstBoolMatrix(dynamic_cast<ConstBoolMatrix*>(expr)->pop());*/
-//			default:
-//				std::string errStr = "Error: cannot change value of constant " + std::to_string(expr->getLine());
-//				throw std::exception(errStr.c_str());
-//		}
-//	}
-//	else {
-//		std::string errStr = "Error: type mismatch, line " + std::to_string(expr->getLine());
-//		throw std::exception(errStr.c_str());
-//	}
-//}
-
 Node* createContainer(Node* child) {
 	switch (child->type()) 	{
 		case VARBOOL:
@@ -154,32 +76,7 @@ Node* createContainer(Node* child) {
 	}
 }
 
-void addElementToContainer(Node* cnt, Node* e) {
-	try {
-		switch (cnt->type()) {
-			case INTARR:
-				dynamic_cast<IntArray*>(cnt)->addElement(e);
-				break;
-			case BOOLARR:
-				dynamic_cast<BoolArray*>(cnt)->addElement(e);
-				break;
-			case INTMATRIX:
-				dynamic_cast<IntMatrix*>(cnt)->addElement(e);
-				break;
-			case BOOLMATRIX:
-				dynamic_cast<BoolMatrix*>(cnt)->addElement(e);
-				break;
-			default:
-				std::string errStr = "Error: Cannot change value of this type, line " + std::to_string(e->getLine());
-				throw std::exception(errStr.c_str());
-		}
-	}
-	catch (std::exception& ex) {
-		throw ex;
-	}
-}
-
-ConstInt* getIntValue(Node* m, Node* f, Node* s) {
+ConstInt* getIntValue(Node* m, Node* f, Node* s, int l) {
 	auto matrix = dynamic_cast<ConstIntMatrix*>(m);
 	if (matrix) {
 		auto i = dynamic_cast<ConstInt*>(f);
@@ -187,7 +84,7 @@ ConstInt* getIntValue(Node* m, Node* f, Node* s) {
 			auto j = dynamic_cast<ConstInt*>(s);
 			if (j) {
 				try {
-					return matrix->getValue(i->getValue(), j->getValue());
+					return matrix->getValue(i->getValue(), j->getValue(), l);
 				}
 				catch (std::exception& ex) {
 					throw ex;
@@ -195,10 +92,10 @@ ConstInt* getIntValue(Node* m, Node* f, Node* s) {
 			}
 		}
 	}
-	std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 	throw std::exception(errStr.c_str());
 }
-ConstBool* getBoolValue(Node* m, Node* f, Node* s) {
+ConstBool* getBoolValue(Node* m, Node* f, Node* s, int l) {
 	auto matrix = dynamic_cast<ConstBoolMatrix*>(m);
 	if (matrix) {
 		auto i = dynamic_cast<ConstInt*>(f);
@@ -206,7 +103,7 @@ ConstBool* getBoolValue(Node* m, Node* f, Node* s) {
 			auto j = dynamic_cast<ConstInt*>(s);
 			if (j) {
 				try {
-					return matrix->getValue(i->getValue(), j->getValue());
+					return matrix->getValue(i->getValue(), j->getValue(),l);
 				}
 				catch (std::exception& ex) {
 					throw ex;
@@ -214,11 +111,11 @@ ConstBool* getBoolValue(Node* m, Node* f, Node* s) {
 			}
 		}
 	}
-	std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 	throw std::exception(errStr.c_str());
 }
 
-ConstIntArray* getIntVec(Node* m, Node* r, bool mode) {
+ConstIntArray* getIntVec(Node* m, Node* r, bool mode, int l) {
 	auto matrix = dynamic_cast<ConstIntMatrix*>(m);
 	auto row = dynamic_cast<ConstInt*>(r);
 	if (matrix) {
@@ -231,14 +128,14 @@ ConstIntArray* getIntVec(Node* m, Node* r, bool mode) {
 			}
 		}
 		else {
-			std::string errStr = "Error: Index expected, line " + std::to_string(r->getLine());
+			std::string errStr = "Error: Index expected, line " + std::to_string(l);
 			throw std::exception(errStr.c_str());
 		}
 	}
-	std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 	throw std::exception(errStr.c_str());
 }
-ConstBoolArray* getBoolVec(Node* m, Node* r, bool mode) {
+ConstBoolArray* getBoolVec(Node* m, Node* r, bool mode, int l) {
 	auto matrix = dynamic_cast<ConstBoolMatrix*>(m);
 	auto row = dynamic_cast<ConstInt*>(r);
 	if (matrix) {
@@ -251,21 +148,21 @@ ConstBoolArray* getBoolVec(Node* m, Node* r, bool mode) {
 			}
 		}
 		else {
-			std::string errStr = "Error: Index expected, line " + std::to_string(r->getLine());
+			std::string errStr = "Error: Index expected, line " + std::to_string(l);
 			throw std::exception(errStr.c_str());
 		}
 	}
-	std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 	throw std::exception(errStr.c_str());
 }
 
-Node* getVec(Node* m, Node* r, bool mode) {
+Node* getVec(Node* m, Node* r, bool mode, int l) {
 	try {
-		return getIntVec(m, r, mode);
+		return getIntVec(m, r, mode, l);
 	}
 	catch (std::exception& ex1) {
 		try {
-			return getBoolVec(m, r, mode);
+			return getBoolVec(m, r, mode, l);
 		}
 		catch (std::exception& ex2) {
 			throw ex2;
@@ -274,7 +171,7 @@ Node* getVec(Node* m, Node* r, bool mode) {
 	}
 }
 
-ConstIntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
+ConstIntMatrix* getIntMatrix(Node* m, Node* r, bool mode, int l) {
 	auto vec = dynamic_cast<ConstIntArray*>(r);
 	auto mx = dynamic_cast<ConstIntMatrix*>(m);
 	std::vector<std::vector<int*>> matrix;
@@ -283,7 +180,7 @@ ConstIntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
 		for (int i = 0; i < val.size(); i++) {
 			Int* index = new Int(new int(*val[i]));
 			try {
-				auto ptr = getIntVec(m, index, mode);
+				auto ptr = getIntVec(m, index, mode, l);
 				matrix.push_back(ptr->pop());
 				delete ptr;
 			}
@@ -295,13 +192,22 @@ ConstIntMatrix* getIntMatrix(Node* m, Node* r, bool mode) {
 		}
 	}
 	else {
-		std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 		throw std::exception(errStr.c_str());
 	}
-	return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(matrix) : new ConstIntMatrix(matrix);
+	if (!mode) {
+		std::vector<std::vector<int*>> resMatrix(matrix.front().size(), std::vector<int*>(matrix.size(),nullptr));
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix.front().size(); j++) {
+				resMatrix[j][i] = matrix[i][j];
+			}
+		}
+		return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(resMatrix, l) : new ConstIntMatrix(resMatrix, t::CONSTINTMATRIX, l);
+	}
+	return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(matrix,l) : new ConstIntMatrix(matrix,t::CONSTINTMATRIX,l);
 }
 
-ConstBoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
+ConstBoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode, int l) {
 	auto mx = dynamic_cast<ConstBoolMatrix*>(m);
 	auto vec = dynamic_cast<ConstIntArray*>(r);
 	std::vector<std::vector<bool*>> matrix;
@@ -310,7 +216,7 @@ ConstBoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
 		for (int i = 0; i < val.size(); i++) {
 			Int* index = new Int(new int(*val[i]));
 			try {
-				auto ptr = getBoolVec(m, index, mode);
+				auto ptr = getBoolVec(m, index, mode, l);
 				matrix.push_back(ptr->pop());
 				delete ptr;
 			}
@@ -322,19 +228,28 @@ ConstBoolMatrix* getBoolMatrix(Node* m, Node* r, bool mode) {
 		}
 	}
 	else {
-		std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
 		throw std::exception(errStr.c_str());
 	}
-	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(matrix) : new ConstBoolMatrix(matrix);
+	if (!mode) {
+		std::vector<std::vector<bool*>> resMatrix(matrix.front().size(), std::vector<bool*>(matrix.size(), nullptr));
+		for (int i = 0; i < matrix.size(); i++) {
+			for (int j = 0; j < matrix.front().size(); j++) {
+				resMatrix[j][i] = matrix[i][j];
+			}
+		}
+		return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(resMatrix, l) : new ConstBoolMatrix(resMatrix, t::CONSTINTMATRIX, l);
+	}
+	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(matrix,l) : new ConstBoolMatrix(matrix,t::CONSTBOOLMATRIX,l);
 }
 
-Node* getMatrix(Node* m, Node* r, bool mode) {
+Node* getMatrix(Node* m, Node* r, bool mode, int l) {
 	try {
-		return getIntMatrix(m, r, mode);
+		return getIntMatrix(m, r, mode, l);
 	}
 	catch (std::exception& ex1) {
 		try {
-			return getBoolMatrix(m, r, mode);
+			return getBoolMatrix(m, r, mode, l);
 		}
 		catch (std::exception& ex2) {
 			throw ex2;
@@ -343,7 +258,7 @@ Node* getMatrix(Node* m, Node* r, bool mode) {
 	}
 }
 
-ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r) {
+ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r,int errline) {
 	auto i = dynamic_cast<ConstIntMatrix*>(m);
 	auto l = dynamic_cast<ConstBoolMatrix*>(r);
 	std::vector<std::vector<int*>> res;
@@ -351,7 +266,7 @@ ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r) {
 		auto iMatrix = i->getMatrix();
 		auto lMatrix = l->getMatrix();
 		if (iMatrix.size() != lMatrix.size() || iMatrix.front().size() != lMatrix.front().size()) {
-			std::string errStr = "Error: Size mismatch, line " + std::to_string(m->getLine());
+			std::string errStr = "Error: Size mismatch, line " + std::to_string(errline);
 			throw std::exception(errStr.c_str());
 		}
 		for (int k = 0; k < lMatrix.size(); k++) {
@@ -361,7 +276,7 @@ ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r) {
 					line.push_back(iMatrix[k][j]);
 			}
 			if (!res.empty() && line.size() != res.front().size() && line.size() != 0) {
-				std::string errStr = "Error: Incorrect logical matrix, line " + std::to_string(r->getLine());
+				std::string errStr = "Error: Incorrect logical matrix, line " + std::to_string(errline);
 				throw std::exception(errStr.c_str());
 			}
 			if(line.size())
@@ -369,13 +284,13 @@ ConstIntMatrix* intMatrixFromLogical(Node* m, Node* r) {
 		}
 	}
 	else {
-		std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(errline);
 		throw std::exception(errStr.c_str());
 	}
 	return dynamic_cast<IntMatrix*>(m) ? new IntMatrix(res) : new ConstIntMatrix(res);
 }
 
-ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
+ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r, int errline) {
 	auto i = dynamic_cast<ConstBoolMatrix*>(m);
 	auto l = dynamic_cast<ConstBoolMatrix*>(r);
 	std::vector<std::vector<bool*>> res;
@@ -383,7 +298,7 @@ ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
 		auto iMatrix = i->getMatrix();
 		auto lMatrix = l->getMatrix();
 		if (iMatrix.size() != lMatrix.size() || iMatrix.front().size() != lMatrix.front().size()) {
-			std::string errStr = "Error: Size mismatch, line " + std::to_string(m->getLine());
+			std::string errStr = "Error: Size mismatch, line " + std::to_string(errline);
 			throw std::exception(errStr.c_str());
 		}
 		std::vector<bool*> line;
@@ -393,7 +308,7 @@ ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
 					line.push_back(iMatrix[k][j]);
 			}
 			if (!res.empty() && line.size() != res.front().size() && line.size() != 0) {
-				std::string errStr = "Error: Incorrect logical matrix, line " + std::to_string(r->getLine());
+				std::string errStr = "Error: Incorrect logical matrix, line " + std::to_string(errline);
 				throw std::exception(errStr.c_str());
 			}
 			if (line.size())
@@ -401,19 +316,153 @@ ConstBoolMatrix* boolMatrixFromLogical(Node* m, Node* r) {
 		}
 	}
 	else {
-		std::string errStr = "Error: Type mismatch, line " + std::to_string(m->getLine());
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(errline);
 		throw std::exception(errStr.c_str());
 	}
-	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(res) : new ConstBoolMatrix(res);
+	return dynamic_cast<BoolMatrix*>(m) ? new BoolMatrix(res, errline) : new ConstBoolMatrix(res,t::CONSTBOOLMATRIX, errline);
 }
 
-Node* matrixFromLogical(Node* m, Node* r) {
+Node* matrixFromLogical(Node* m, Node* r, int l) {
 	try {
-		return intMatrixFromLogical(m, r);
+		return intMatrixFromLogical(m, r,l);
 	}
 	catch (std::exception& ex1) {
 		try {
-			return boolMatrixFromLogical(m, r);
+			return boolMatrixFromLogical(m, r,l);
+		}
+		catch (std::exception& ex2) {
+			throw ex2;
+		}
+		throw ex1;
+	}
+}
+
+ConstIntArray* intArrayFromArray(Node* m, Node* r, int line) {
+	auto arr = dynamic_cast<ConstIntArray*>(m);
+	auto logic = dynamic_cast<ConstBoolArray*>(r);
+	if (arr && logic) {
+		if (arr->size() == logic->size()) {
+			auto v = arr->getValue();
+			auto l = logic->getValue();
+			std::vector<int*> res;
+			for (int i = 0; i < l.size(); i++) {
+				if(*l[i])
+					res.push_back(v[i]);
+			}
+			return dynamic_cast<IntArray*>(m) ? new IntArray(res, line) : new ConstIntArray(res, t::CONSTINTARR, line);
+		}
+		else {
+			std::string errStr = "Error: Size mismatch, line " + std::to_string(line);
+			throw std::exception(errStr.c_str());
+		}
+	}
+	else {
+		auto numbers = dynamic_cast<ConstIntArray*>(r);
+		if (arr && numbers) {
+			auto v = arr->getValue();
+			auto num = numbers->getValue();
+			std::vector<int*> res;
+			for (int i = 0; i < num.size(); i++) {
+				if (*num[i] > -1 && *num[i] < v.size())
+					res.push_back(v[*num[i]]);
+			}
+			return dynamic_cast<IntArray*>(m) ? new IntArray(res, line) : new ConstIntArray(res, t::CONSTINTARR, line);
+		}
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(line);
+		throw std::exception(errStr.c_str());
+	}
+}
+
+ConstBoolArray* boolArrayFromArray(Node* m, Node* r, int line) {
+	auto arr = dynamic_cast<ConstBoolArray*>(m);
+	auto logic = dynamic_cast<ConstBoolArray*>(r);
+	if (arr && logic) {
+		if (arr->size() == logic->size()) {
+			auto v = arr->getValue();
+			auto l = logic->getValue();
+			std::vector<bool*> res;
+			for (int i = 0; i < l.size(); i++) {
+				if (*l[i])
+					res.push_back(v[i]);
+			}
+			return dynamic_cast<BoolArray*>(m) ? new BoolArray(res, line) : new ConstBoolArray(res, t::CONSTBOOLARR, line);
+		}
+		else {
+			std::string errStr = "Error: Size mismatch, line " + std::to_string(line);
+			throw std::exception(errStr.c_str());
+		}
+	}
+	else {
+		auto numbers = dynamic_cast<ConstIntArray*>(r);
+		if (arr && numbers) {
+			auto v = arr->getValue();
+			auto num = numbers->getValue();
+			std::vector<bool*> res;
+			for (int i = 0; i < num.size(); i++) {
+				if (*num[i] > -1 && *num[i] < v.size())
+					res.push_back(v[*num[i]]);
+			}
+			return dynamic_cast<BoolArray*>(m) ? new BoolArray(res, line) : new ConstBoolArray(res, t::CONSTBOOLARR, line);
+		}
+		std::string errStr = "Error: Type mismatch, line " + std::to_string(line);
+		throw std::exception(errStr.c_str());
+	}
+}
+
+Node* arrayFromArray(Node* m, Node* r, int l) {
+	try {
+		return intArrayFromArray(m, r, l);
+	}
+	catch (std::exception& ex1) {
+		try {
+			return boolArrayFromArray(m, r, l);
+		}
+		catch (std::exception& ex2) {
+			throw ex2;
+		}
+		throw ex1;
+	}
+}
+
+ConstBool* boolFromArray(Node* arr, int i, int l) {
+	auto ar = dynamic_cast<ConstBoolArray*>(arr);
+	if (ar) {
+		bool* ptr = nullptr;
+		try {
+			ptr = ar->getVal(i);
+		}
+		catch (std::exception& ex) {
+			throw ex;
+		}
+		return dynamic_cast<BoolArray*>(arr) ? new Bool(ptr, l) : new ConstBool(ptr, t::CONSTINT, l);
+	}
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
+	throw std::exception(errStr.c_str());
+}
+
+ConstInt* intFromArray(Node* arr, int i, int l) {
+	auto ar = dynamic_cast<ConstIntArray*>(arr);
+	if (ar) {
+		int* ptr = nullptr;
+		try {
+			ptr = ar->getVal(i);
+		}
+		catch (std::exception& ex) {
+			throw ex;
+		}
+		return dynamic_cast<IntArray*>(arr) ? new Int(ptr, l) : new ConstInt(ptr, t::CONSTINT, l);
+	}
+	std::string errStr = "Error: Type mismatch, line " + std::to_string(l);
+	throw std::exception(errStr.c_str());
+}
+
+Node* valFromArray(Node* arr, int i, int l) {
+	try {
+		return intFromArray(arr, i, l);
+	}
+	catch (std::exception& ex1) {
+		try {
+			return boolFromArray(arr, i, l);
 		}
 		catch (std::exception& ex2) {
 			throw ex2;
@@ -435,29 +484,6 @@ bool isConst(Node* n) {
 bool multiplicable(Node* f, Node* s) {
 	return compatible(t::CONSTINTMATRIX, f, s);
 }
-
-/*Node* minus(Node* node) {
-	Node* n;
-	try {
-		n = node->execute();
-	}
-	catch (std::exception& ex) {
-		throw ex;
-	}
-	auto i = dynamic_cast<ConstInt*>(n);
-	if (i)
-		return new Int(new int(-i->getValue()),i->getLine());
-	auto b = dynamic_cast<ConstBool*>(n);
-	if (b)
-		return new Int(new int(-b->getValue()), b->getLine());
-	auto ia = dynamic_cast<ConstIntArray*>(n);
-	if(ia)
-		return new IntArray(ia->negativeValue(),ia->getLine());
-	auto im = dynamic_cast<ConstIntMatrix*>(n);
-	if (im)
-		return new IntMatrix(im->negativeValue(), im->getLine());
-	throw std::exception("Wrong operand");
-}*/
 
 std::vector<std::vector<char>> parseMap(const std::string& filename,int& xx, int& yy, int& dir) {
 	std::ifstream in("Programs/labyrinth.txt");

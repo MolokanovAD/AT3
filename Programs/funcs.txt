@@ -1,9 +1,15 @@
-int result = function addIf(int i, int j = 10) begin
+vint result = function addIf(int i, int j = 10) begin
 	function foo() begin
 		int var = 123
 	end
-	int result = 5
+	vint result = {5}
 end
 addIf 10
-cint k = 0
-k <-4
+int res, bool someVal = function recursive(int i) begin
+	int res = i
+	bool someVal = false
+	if i < 5 beginif
+		recursive i + 1
+	endif
+end
+recursive 0

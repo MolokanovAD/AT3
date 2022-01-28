@@ -33,3 +33,4 @@ bool greater1 = 5 > 6
 bool greater2 = intValue1 > intValue2
 bool less1 = intValue1 < intValue2
 bool less2 = 10 < -1000
+mint negMatrix = -{{1,2,3},{4,5,6}}

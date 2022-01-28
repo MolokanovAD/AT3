@@ -1,2 +1,0 @@
-cmint m = {{11,12,13},{21,22,23}}
-mint i = m({{true,false,false},{false,true,false}})
